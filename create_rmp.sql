@@ -22,13 +22,26 @@ is_active BOOLEAN DEFAULT 0
 );
 
 CREATE TABLE course_by_professor (
+cbp_id INT PRIMARY KEY AUTO_INCREMENT,
 cid INT NOT NULL,
 pid INT NOT NULL,
 sid INT NOT NULL,
-PRIMARY KEY (cid, pid, sid),	
-CONSTRAINT cbp_cid_fk FOREIGN KEY (cid) REFERENCES course(cid),
-CONSTRAINT cbp_pid_fk FOREIGN KEY (pid) REFERENCES professor(pid),
-CONSTRAINT cbp_sid_fk FOREIGN KEY (sid) REFERENCES semester(sid)
+unique key cid_pid_sid (cid, pid, sid),
+CONSTRAINT cbp_cid_fk 
+	FOREIGN KEY (cid) 
+    REFERENCES course(cid)
+    ON UPDATE cascade
+    ON DELETE restrict,
+CONSTRAINT cbp_pid_fk 
+	FOREIGN KEY (pid) 
+	REFERENCES professor(pid)
+    ON UPDATE cascade
+    ON DELETE restrict,
+CONSTRAINT cbp_sid_fk 
+	FOREIGN KEY (sid) 
+    REFERENCES semester(sid)
+    ON UPDATE restrict
+    ON DELETE restrict
 );
 
 CREATE TABLE student (
@@ -44,23 +57,53 @@ likes INT,
 dislikes INT
 );
 
+CREATE TABLE abilities (
+aid INT PRIMARY KEY AUTO_INCREMENT,
+description VARCHAR(255) UNIQUE
+);
+
 CREATE TABLE review (
-nuid  		INT		NOT NULL,
-cid 		INT NOT NULL,
-pid 		INT NOT NULL,
-sid 		INT NOT NULL,
-rating 		DECIMAL(2,1),
-comment_id 	INT NOT NULL,
-CHECK (rating <= 10.0),
-CONSTRAINT student_fk 
-	FOREIGN KEY (nuid) 
-    REFERENCES student(nuid),
-CONSTRAINT cbp_fk 
-	FOREIGN KEY (cid, pid, sid) 
-    REFERENCES course_by_professor(cid, pid, sid),
-CONSTRAINT review_comment_fk 
-	FOREIGN KEY (review_comment) 
-    REFERENCES review_comment(comment_id)
+    nuid INT NOT NULL,
+    cbp_id INT NOT NULL,
+    rating DECIMAL(2 , 1 ),
+    comment_id INT,
+    strength1 INT,
+    strength2 INT,
+    weakness1 INT,
+    weakness2 INT,
+    PRIMARY KEY (nuid , cbp_id),
+    CHECK (rating <= 10.0),
+    CONSTRAINT student_fk 
+		FOREIGN KEY (nuid)
+        REFERENCES student (nuid)
+        ON UPDATE cascade
+		ON DELETE restrict,
+    CONSTRAINT cbp_fk 
+		FOREIGN KEY (cbp_id)
+        REFERENCES course_by_professor (cbp_id)
+        ON UPDATE cascade
+		ON DELETE restrict,
+    CONSTRAINT review_comment_fk 
+		FOREIGN KEY (review_comment)
+        REFERENCES review_comment (comment_id)
+        ON UPDATE cascade
+		ON DELETE set NULL,
+    FOREIGN KEY (strength1)
+        REFERENCES abilities (aid)
+        ON UPDATE cascade
+		ON DELETE set NULL,
+    FOREIGN KEY (strength2)
+        REFERENCES abilities (aid)
+		ON UPDATE cascade
+		ON DELETE set NULL,
+    FOREIGN KEY (weakness1)
+        REFERENCES abilities (aid)
+        ON UPDATE cascade
+		ON DELETE set NULL,
+    FOREIGN KEY (weakness2)
+        REFERENCES abilities (aid)
+        ON UPDATE cascade
+		ON DELETE set NULL,
 );
 
 
