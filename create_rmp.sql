@@ -53,7 +53,9 @@ DROP TABLE IF EXISTS student;
 CREATE TABLE student (
 nuid  	INT		PRIMARY KEY		AUTO_INCREMENT,
 fname VARCHAR(30) NOT NULL,
-lname VARCHAR(30) NOT NULL
+lname VARCHAR(30) NOT NULL,
+username varchar(255) DEFAULT NULL UNIQUE,
+password varchar(255) DEFAULT NULL 
 );
 
 DROP TABLE IF EXISTS review_comment;
