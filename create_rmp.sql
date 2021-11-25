@@ -1,6 +1,8 @@
+DROP DATABASE IF EXISTS das_a_link_dd;
 CREATE DATABASE das_a_link_dd;
 USE das_a_link_dd;
 
+DROP TABLE IF EXISTS course;
 CREATE TABLE course (
 cid  	INT		PRIMARY KEY		AUTO_INCREMENT,
 course_subject CHAR(4) NOT NULL,
@@ -8,12 +10,14 @@ course_num INT NOT NULL,
 title VARCHAR(40) NOT NULL
 );
 
+DROP TABLE IF EXISTS professor;
 CREATE TABLE professor (
 pid  	INT		PRIMARY KEY		AUTO_INCREMENT,
 fname VARCHAR(30) NOT NULL,
 lname VARCHAR(30) NOT NULL
 );
 
+DROP TABLE IF EXISTS semester;
 CREATE TABLE semester (
 sid INT		PRIMARY KEY		AUTO_INCREMENT,
 sem_year YEAR(4) NOT NULL,
@@ -21,6 +25,7 @@ sem_season VARCHAR(10) NOT NULL,
 is_active BOOLEAN DEFAULT 0
 );
 
+DROP TABLE IF EXISTS course_by_professor;
 CREATE TABLE course_by_professor (
 cbp_id INT PRIMARY KEY AUTO_INCREMENT,
 cid INT NOT NULL,
@@ -44,12 +49,14 @@ CONSTRAINT cbp_sid_fk
     ON DELETE restrict
 );
 
+DROP TABLE IF EXISTS student;
 CREATE TABLE student (
 nuid  	INT		PRIMARY KEY		AUTO_INCREMENT,
 fname VARCHAR(30) NOT NULL,
 lname VARCHAR(30) NOT NULL
 );
 
+DROP TABLE IF EXISTS review_comment;
 CREATE TABLE review_comment (
 comment_id INT		PRIMARY KEY		AUTO_INCREMENT,
 content VARCHAR(255),
@@ -57,11 +64,13 @@ likes INT,
 dislikes INT
 );
 
+DROP TABLE IF EXISTS abilities;
 CREATE TABLE abilities (
 aid INT PRIMARY KEY AUTO_INCREMENT,
 description VARCHAR(255) UNIQUE
 );
 
+DROP TABLE IF EXISTS review;
 CREATE TABLE review (
     nuid INT NOT NULL,
     cbp_id INT NOT NULL,
@@ -84,7 +93,7 @@ CREATE TABLE review (
         ON UPDATE cascade
 		ON DELETE restrict,
     CONSTRAINT review_comment_fk 
-		FOREIGN KEY (review_comment)
+		FOREIGN KEY (comment_id)
         REFERENCES review_comment (comment_id)
         ON UPDATE cascade
 		ON DELETE set NULL,
@@ -103,7 +112,7 @@ CREATE TABLE review (
     FOREIGN KEY (weakness2)
         REFERENCES abilities (aid)
         ON UPDATE cascade
-		ON DELETE set NULL,
+		ON DELETE set NULL
 );
 
 
