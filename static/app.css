@@ -1,0 +1,88 @@
+body {
+    font-family: Arial, Helvetica, sans-serif !important;
+}
+
+input {
+    border-radius: 25px !important;
+}
+select {
+    border-radius: 25px !important;
+}
+textarea {
+    border-radius: 25px !important;
+}
+
+.btn {
+    background-color: white !important;
+    border-color: rgb(35, 131, 160) !important;
+    border-width: 1px;
+    color: rgb(35, 131, 160) !important;
+    border-radius: 25px;
+}
+
+.btn:focus {
+    box-shadow: none !important;
+    background-color:rgb(35, 131, 160) !important; 
+    color:white !important;
+    border-radius: 25px;
+}
+.white {
+    color: white !important;
+}
+
+.white:hover {
+    color:rgb(35, 131, 160) !important;
+}
+
+.mybtn {
+    background-color: none !important;
+}
+
+.mybtn:hover {
+    background-color: rgb(35, 131, 160) !important;
+    color: white !important;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: rgb(35, 131, 160);
+}
+
+.secondaryText {
+    color: gray;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.floatr {
+    float: right;
+}
+
+.text-alert {
+    font-size: 12px;
+}
+
+.danger {
+    color: red !important;
+    border-color: red !important;
+}
+
+.danger:focus {
+    background-color: red !important;
+}
+
+.success {
+    color: green;
+}
+
+.myresult {
+    color: black;
+    text-decoration: none;
+}
+
+.myresult:hover {
+    color: white;
+    background-color: rgb(35, 131, 160);
+}

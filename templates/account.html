@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}
+Account
+{% endblock %}
+
+{% block link %}
+{% endblock %}
+
+{% block body %}
+
+<div class="row my-5">
+    <div class="col-2">
+        <i class="fa fa-user-circle fa-10x"></i>
+    </div>
+    <div class="col-7">
+        <h1>{{ student_name }}</h1>
+        <span class="secondaryText">{{ nuid }}</span>
+
+        <form class="mt-5 mb-2" action="/account" method="POST">
+            <div class="form-group row py-2 w-75">
+
+                <label for="changepwd">
+                    <h5>Change Password</h5>
+                </label>
+                <div class="col-9">
+                    <input type="password" name="pwd" class="form-control" id="changepwd">
+                    {% if changePwd %}
+                    <span class="d-inline success text-alert absolute">Successfully changed.</span>
+                    {% endif %}
+                </div>
+                <div class="col">
+                    <button class="btn btn-primary" type="submit">Change</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="d-block pt-5 pb-2">
+            <a href="/account/logout" class="mybtn btn btn-primary me-2" role="button">Log Out</a>
+            <button class="danger btn btn-primary my-2 ">Delete Account</button>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

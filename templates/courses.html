@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Courses
+{% endblock %}
+
+{% block body %}
+<h1 class="my-5">My Courses</h1>
+{% for course in courses %}
+<div class="row my-2 w-75">
+    <div class="col-2">
+        {{ course["semester"] }}
+    </div>
+    <div class="col-2">
+        {{ course["subject"] }} {{ course["num"] }}
+    </div>
+    <div class="col">
+        {{ course["title"] }}
+    </div>
+    <div class="col">
+        {% if course["reviewed"] %}
+        <a href="/write?cid=0" class="mybtn btn btn-primary d-block w-50 mx-auto" role="button">Edit Review</a>
+        {% else %}
+        <a href="/write?cid=0" class="danger btn btn-primary d-block w-50 mx-auto" role="button">Write Review</a>
+        {% endif %}
+        </a>
+    </div>
+
+</div>
+{% endfor %}
+{% endblock %}

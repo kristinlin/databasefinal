@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}
+Write Review
+{% endblock %}
+
+{% block body %}
+<h1>{{ professor }}</h1>
+<h1>{{ course }}</h1>
+
+
+<form class="row mt-5 w-75" action="/write/review" method="POST">
+    <div class="mb-3 row">
+        <label for="reviewrating" class="col-sm-2 col-form-label">Rating <span class="danger">*</span></label>
+        <div class="col-2">
+            <input type="range" step=".1" min="1" max="10" class="form-control" id="reviewrating"
+                oninput="amount.value=reviewrating.value">
+        </div>
+        <div class="col-1">
+            <output class="d-inline" id="amount" name="amount" for="reviewrating">0</output>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="reviewComment" class="col-sm-2 col-form-label">Comment</label>
+        <div class="col">
+            <textarea rows="6" class="form-control" id="reviewComment"></textarea>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="reviewComment" class="col-sm-2 col-form-label">Strength [1st]</label>
+        <div class="col">
+            <select class="form-control" id="reviewStrength1">
+                <option></option>
+                {% for s in abilities %}
+                <option>{{ s }}</option>
+                {% endfor %}
+                <option>Listening</option>
+                <option>Teaching</option>
+            </select>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="reviewComment" class="col-sm-2 col-form-label">Strength [2nd]</label>
+        <div class="col">
+            <select class="form-control" id="reviewStrength1">
+                <option></option>
+                {% for s in abilities %}
+                <option>{{ s }}</option>
+                {% endfor %}
+                <option>Listening</option>
+                <option>Teaching</option>
+            </select>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="reviewComment" class="col-sm-2 col-form-label">Weakness [1st]</label>
+        <div class="col">
+            <select class="form-control" id="reviewStrength1">
+                <option></option>
+                {% for s in abilities %}
+                <option>{{ s }}</option>
+                {% endfor %}
+                <option>Listening</option>
+                <option>Teaching</option>
+            </select>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="reviewComment" class="col-sm-2 col-form-label">Weakness [2nd]</label>
+        <div class="col">
+            <select class="form-control" id="reviewStrength1">
+                <option></option>
+                {% for s in abilities %}
+                <option>{{ s }}</option>
+                {% endfor %}
+                <option>Listening</option>
+                <option>Teaching</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-auto mt-5">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+
+{% endblock %}

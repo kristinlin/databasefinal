@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}
+Search Reviews
+{% endblock %}
+
+{% block body %}
+<form class="row" action="/search" method="POST">
+    <div class="col-auto">
+        <label for="searchprof">Professor</label>
+        <input type="text" class="form-control" id="searchprof" placeholder="Kathleen Durane">
+    </div>
+    <div class="col-auto">
+        <label for="searchSubject">Course Subject</label>
+        <select class="form-control" id="searchSubject">
+            <option></option>
+            {% for s in subject %}
+            <option>{{ s }}</option>
+            {% endfor %}
+            <option>CS</option>
+            <option>MATH</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <label for="searchCourseNum">Course Number</label>
+        <select class="form-control" id="searchCourseNum">
+            <option></option>
+            {% for num in courseNum %}
+            <option>{{ num }}</option>
+            {% endfor %}
+            <option>1800</option>
+            <option>3200</option>
+        </select>
+    </div>
+    <div class="col-auto mt-auto">
+        <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
+    </div>
+</form>
+
+{% if results|length > 0 %}
+<div class="row ms-2 mt-5">
+    <div class="row bg-dark text-white">
+        <div class="col-2">
+            Course
+        </div>
+        <div class="col-5">
+            Course Title
+        </div>
+        <div class="col-5">
+            Professor
+        </div>
+    </div>
+    {% for result in results %}
+    <a href="/course?courseId={{ result['id'] }}" class="row py-2 myresult">
+        <div class="col-2">
+            {{ result["col1"] }}
+        </div>
+        <div class="col-5">
+            {{ result["col2"] }}
+        </div>
+        <div class="col-5">
+            {{ result["col3"] }}
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
