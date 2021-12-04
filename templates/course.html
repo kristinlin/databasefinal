@@ -1,9 +1,89 @@
 {% extends "base.html" %}
 
 {% block title %}
-Home Page
+Course Page
 {% endblock %}
 
 {% block body %}
-<h1>COURSE</h1>
+<div class="row">
+    <div class="col-auto">
+        <h1>{{ professor }}</h1>
+        <h1>{{ course }}</h1>
+    </div>
+    <div class="col">
+        <div class="dropdown floatr">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ semester }}
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="/course?courseId={{ courseId }}&semester=All Semesters">All Semesters</a>
+                <a class="dropdown-item" href="/course?courseId={{ courseId }}&semester=Fall2020">Fall2020</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row my-5">
+    <div class="col">
+        <h3>Rating Stats</h3>
+        <div class="d-inline-block stats">Participation Rate:</div>
+        <div class="d-inline-block stats">Median:</div>
+        <div class="d-inline-block stats">Mean:</div>
+        <h1>Graph</h1>
+    </div>
+    <div class="col">
+        <h3>Strengths</h3>
+        <h1>Graph</h1>
+
+        <h3>Weaknesses</h3>
+        <h1>Graph</h1>
+    </div>
+</div>
+
+<div class="row bg-dark text-white mt-5">
+    <div class="col-1">
+        Review#
+    </div>
+    <div class="col-1">
+        Semester
+    </div>
+    <div class="col">
+        Comment
+    </div>
+    <div class="col-2">
+        Rating
+    </div>
+    <div class="col-2">
+        Helpful
+    </div>
+</div>
+{% for review in reviews %}
+<div class="row my-3">
+    <div class="col-1">
+        {{ review["id"] }}
+    </div>
+    <div class="col-1">
+        Fall2020
+    </div>
+    <div class="col">
+        {{ review["comment"] }}
+    </div>
+    <div class="col-2">
+        {{ review["rating"] }}
+    </div>
+    <div class="col-2">
+        {% if like %}
+        <a href="/course?courseId={{ courseId }}&semester={{ semester }}&like=False"> <i
+                class="fas fa-thumbs-up"></i></a>
+        {% else %}
+        <a href="/course?courseId={{ courseId }}&semester={{ semester }}&like=True"> <i class="far fa-thumbs-up"></i>
+        </a>
+        {% endif %}
+
+        {{ review["helpful"] }}
+    </div>
+</div>
+{% endfor %}
 {% endblock %}
