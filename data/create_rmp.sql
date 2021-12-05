@@ -31,6 +31,7 @@ cbp_id INT PRIMARY KEY AUTO_INCREMENT,
 cid INT NOT NULL,
 pid INT NOT NULL,
 sid INT NOT NULL,
+num_students INT NOT NULL DEFAULT 0,
 unique key cid_pid_sid (cid, pid, sid),
 CONSTRAINT cbp_cid_fk 
 	FOREIGN KEY (cid) 
@@ -54,8 +55,26 @@ CREATE TABLE student (
 nuid  	INT		PRIMARY KEY		AUTO_INCREMENT,
 fname VARCHAR(30) NOT NULL,
 lname VARCHAR(30) NOT NULL,
-username varchar(255) DEFAULT NULL UNIQUE,
-password varchar(255) DEFAULT NULL 
+pwd varchar(255) NOT NULL 
+);
+
+DROP TABLE IF EXISTS student_course;
+CREATE TABLE student_course (
+student_course_id INT PRIMARY KEY AUTO_INCREMENT,
+nuid  	INT		NOT NULL,
+cbp_id 	INT		NOT NULL,
+is_active BOOLEAN NOT NULL DEFAULT 1,
+UNIQUE KEY (nuid, cbp_id),
+CONSTRAINT student_course_nuid_fk 
+	FOREIGN KEY (nuid) 
+    REFERENCES student(nuid)
+    ON UPDATE restrict
+    ON DELETE restrict,
+CONSTRAINT student_course_cbp_id_fk 
+	FOREIGN KEY (cbp_id) 
+    REFERENCES course_by_professor(cbp_id)
+    ON UPDATE restrict
+    ON DELETE restrict
 );
 
 DROP TABLE IF EXISTS review_comment;
@@ -74,24 +93,18 @@ description VARCHAR(255) UNIQUE
 
 DROP TABLE IF EXISTS review;
 CREATE TABLE review (
-    nuid INT NOT NULL,
-    cbp_id INT NOT NULL,
+	review_id  	INT		PRIMARY KEY		AUTO_INCREMENT,
+    student_course_id INT UNIQUE NOT NULL,
     rating DECIMAL(2 , 1 ),
     comment_id INT,
     strength1 INT,
     strength2 INT,
     weakness1 INT,
     weakness2 INT,
-    PRIMARY KEY (nuid , cbp_id),
     CHECK (rating <= 10.0),
-    CONSTRAINT student_fk 
-		FOREIGN KEY (nuid)
-        REFERENCES student (nuid)
-        ON UPDATE cascade
-		ON DELETE restrict,
-    CONSTRAINT cbp_fk 
-		FOREIGN KEY (cbp_id)
-        REFERENCES course_by_professor (cbp_id)
+    CONSTRAINT review_student_course_id_fk 
+		FOREIGN KEY (student_course_id)
+        REFERENCES student_course (student_course_id)
         ON UPDATE cascade
 		ON DELETE restrict,
     CONSTRAINT review_comment_fk 
@@ -115,6 +128,25 @@ CREATE TABLE review (
         REFERENCES abilities (aid)
         ON UPDATE cascade
 		ON DELETE set NULL
+);
+
+DROP TABLE IF EXISTS student_likes_review;
+CREATE TABLE student_likes_review (
+student_like_review_id INT PRIMARY KEY AUTO_INCREMENT,
+nuid  	INT		NOT NULL,
+review_id 	INT		NOT NULL,
+
+UNIQUE KEY (nuid, review_id),
+CONSTRAINT slr_nuid_fk 
+	FOREIGN KEY (nuid) 
+    REFERENCES student(nuid)
+    ON UPDATE cascade
+    ON DELETE cascade,
+CONSTRAINT slr_review_id_fk 
+	FOREIGN KEY (review_id) 
+    REFERENCES review(review_id)
+    ON UPDATE cascade
+    ON DELETE cascade
 );
 
 
