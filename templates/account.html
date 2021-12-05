@@ -14,8 +14,8 @@ Account
         <i class="fa fa-user-circle fa-10x"></i>
     </div>
     <div class="col-7">
-        <h1>{{ student_name }}</h1>
-        <span class="secondaryText">{{ nuid }}</span>
+        <h1>{{ student["fname"] }} {{ student["lname"] }}</h1>
+        <span class="secondaryText">NUID: {{ student["nuid"] }}</span>
 
         <form class="mt-5 mb-2" action="/account" method="POST">
             <div class="form-group row py-2 w-75">

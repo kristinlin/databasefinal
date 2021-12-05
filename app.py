@@ -1,4 +1,5 @@
 from flask import Flask, session, render_template, request, redirect, url_for
+from data import database
 
 app = Flask(__name__)
 app.secret_key = "REALLYSECRET"
@@ -19,8 +20,7 @@ def login():
     if request.method == "POST":
         nuid = request.form["nuid"]
         pwd = request.form["pwd"]
-        print(nuid + " " + pwd)
-        if nuid == "00000":  # TODO check user exists
+        if database.student_login(nuid, pwd):
             session["user"] = nuid
             return redirect(url_for("homepage"))
         fail = True
@@ -40,13 +40,10 @@ def account():
     changePwd = False
     if request.method == "POST":
         pwd = request.form["pwd"]
-        print("new password: " + pwd)
-        # TODO actually change password
-        changePwd = True
+        changePwd = database.update_password(session["user"], pwd)
     return render_template(
         "account.html",
-        student_name="Tester Name",
-        nuid=session["user"],
+        student=database.getStudent(session["user"]),
         changePwd=changePwd,
     )
 
@@ -100,7 +97,12 @@ def course():
     if "like" in request.args:
         like = request.args.get("like") == "True"
     reviews = [
-        {"id": 123, "comment": "Wooohoo my comment is here", "rating": 9.6, "helpful": 6}
+        {
+            "id": 123,
+            "comment": "Wooohoo my comment is here",
+            "rating": 9.6,
+            "helpful": 6,
+        }
     ]
     return render_template(
         "course.html",
@@ -109,7 +111,7 @@ def course():
         course="CS3200 Database Design",
         semester=semester,
         reviews=reviews,
-        like = like
+        like=like,
     )
 
 
@@ -127,5 +129,5 @@ def writeReview():
 
 
 if __name__ == "__main__":
-    app.debug = True
+    database.connectDb()
     app.run()
