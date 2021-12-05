@@ -33,5 +33,45 @@ begin
 end$$
 delimiter ;
 
-call update_pwd(1, "newpwd1");
-select student_login(1, "newpwd1");
+-- call update_pwd(1, "newpwd1");
+-- select student_login(1, "newpwd1");
+
+
+drop procedure if exists get_student_courses;
+delimiter $$
+create procedure get_student_courses
+(
+	in in_nuid int
+)
+begin
+	select sid, course_subject, course_num, title, pid, student_course_id  from 
+	course c, (select cbp_id, student_course_id from student_course where nuid = in_nuid) as t, course_by_professor cbp
+    where cbp.cbp_id = t.cbp_id and
+    cbp.cid = c.cid;
+end$$
+delimiter ;
+
+-- call get_student_courses(1);
+
+drop function if exists sid_semester;
+delimiter $$
+create function sid_semester
+(
+	in_sid int
+)
+returns varchar (15)
+deterministic reads sql data
+begin
+	declare sem_string varchar(15);
+    set sem_string = 
+    (select concat(sem_season, " ", sem_year) from semester s
+    where s.sid = in_sid );
+    return sem_string;
+end$$
+delimiter ;
+
+-- select sid_semester(7);
+
+
+
+
