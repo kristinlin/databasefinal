@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Write Review
+Edit Review
 {% endblock %}
 
 {% block body %}
@@ -9,21 +9,22 @@ Write Review
 <h1>{{ course }}</h1>
 
 
-<form class="row mt-5 w-75" action="/write/review?scid={{ scid }}" method="POST">
+<form class="row mt-5 w-75" action="/edit/review?review_id={{ review['review_id'] }}" method="POST">
     <div class="mb-3 row">
         <label for="reviewrating" class="col-sm-2 col-form-label">Rating <span class="danger">*</span></label>
         <div class="col-2">
-            <input type="range" step=".1" min="1" max="10" value="5" class="form-control" id="reviewrating"
-                name="rating" oninput="amount.value=reviewrating.value">
+            <input type="range" step=".1" min="1" max="10" value="{{ review['rating'] }}" class="form-control"
+                id="reviewrating" name="rating" oninput="amount.value=reviewrating.value">
         </div>
         <div class="col-1">
-            <output class="d-inline" id="amount" name="amount" for="reviewrating">5</output>
+            <output class="d-inline" id="amount" name="amount" for="reviewrating">{{ review['rating'] }}</output>
         </div>
     </div>
     <div class="mb-3 row">
         <label for="reviewComment" class="col-sm-2 col-form-label">Comment</label>
         <div class="col">
-            <textarea rows="6" class="form-control" id="reviewComment" name="comment"></textarea>
+            <textarea rows="6" class="form-control" id="reviewComment"
+                name="comment">{{ review["review_comment"] }}</textarea>
         </div>
     </div>
     <div class="mb-3 row">
@@ -32,7 +33,11 @@ Write Review
             <select class="form-control" id="reviewStrength1" name="str1">
                 <option value="-1"></option>
                 {% for s in abilities %}
+                {% if s['aid'] == review['strength1'] %}
+                <option value="{{ s['aid'] }}" SELECTED>{{ s["description"] }}</option>
+                {% else %}
                 <option value="{{ s['aid'] }}">{{ s["description"] }}</option>
+                {% endif %}
                 {% endfor %}
             </select>
         </div>
@@ -43,7 +48,11 @@ Write Review
             <select class="form-control" id="reviewStrength2" name="str2">
                 <option value="-1"></option>
                 {% for s in abilities %}
+                {% if s['aid'] == review['strength2'] %}
+                <option value="{{ s['aid'] }}" SELECTED>{{ s["description"] }}</option>
+                {% else %}
                 <option value="{{ s['aid'] }}">{{ s["description"] }}</option>
+                {% endif %}
                 {% endfor %}
             </select>
         </div>
@@ -54,7 +63,11 @@ Write Review
             <select class="form-control" id="reviewWeakness1" name="wk1">
                 <option value="-1"></option>
                 {% for s in abilities %}
+                {% if s['aid'] == review['weakness1'] %}
+                <option value="{{ s['aid'] }}" SELECTED>{{ s["description"] }}</option>
+                {% else %}
                 <option value="{{ s['aid'] }}">{{ s["description"] }}</option>
+                {% endif %}
                 {% endfor %}
             </select>
         </div>
@@ -65,13 +78,18 @@ Write Review
             <select class="form-control" id="reviewStrength1" name="wk2">
                 <option value="-1"></option>
                 {% for s in abilities %}
+                {% if s['aid'] == review['weakness2'] %}
+                <option value="{{ s['aid'] }}" SELECTED>{{ s["description"] }}</option>
+                {% else %}
                 <option value="{{ s['aid'] }}">{{ s["description"] }}</option>
+                {% endif %}
                 {% endfor %}
             </select>
         </div>
     </div>
     <div class="col-auto mt-5">
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary" name="save">Save</button>
+        <button type="submit" class="danger btn btn-primary" name="delete">Delete</button>
     </div>
 </form>
 

@@ -77,14 +77,6 @@ CONSTRAINT student_course_cbp_id_fk
     ON DELETE restrict
 );
 
-DROP TABLE IF EXISTS review_comment;
-CREATE TABLE review_comment (
-comment_id INT		PRIMARY KEY		AUTO_INCREMENT,
-content VARCHAR(255),
-likes INT,
-dislikes INT
-);
-
 DROP TABLE IF EXISTS abilities;
 CREATE TABLE abilities (
 aid INT PRIMARY KEY AUTO_INCREMENT,
@@ -95,8 +87,9 @@ DROP TABLE IF EXISTS review;
 CREATE TABLE review (
 	review_id  	INT		PRIMARY KEY		AUTO_INCREMENT,
     student_course_id INT UNIQUE NOT NULL,
-    rating DECIMAL(2 , 1 ),
-    comment_id INT,
+    rating DECIMAL(2 , 1 ) NOT NULL DEFAULT 5,
+    review_comment VARCHAR(1000),
+    likes INT NOT NULL DEFAULT 0,
     strength1 INT,
     strength2 INT,
     weakness1 INT,
@@ -107,11 +100,6 @@ CREATE TABLE review (
         REFERENCES student_course (student_course_id)
         ON UPDATE cascade
 		ON DELETE restrict,
-    CONSTRAINT review_comment_fk 
-		FOREIGN KEY (comment_id)
-        REFERENCES review_comment (comment_id)
-        ON UPDATE cascade
-		ON DELETE set NULL,
     FOREIGN KEY (strength1)
         REFERENCES abilities (aid)
         ON UPDATE cascade

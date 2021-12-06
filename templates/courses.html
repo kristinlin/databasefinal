@@ -19,9 +19,11 @@ My Courses
     </div>
     <div class="col">
         {% if course["review_id"] > -1 %}
-        <a href="/edit?review={{ course['review_id'] }}" class="mybtn btn btn-primary d-block w-50 mx-auto" role="button">Edit Review</a>
+        <a href="/edit?review={{ course['review_id'] }}&profName={{ course['prof_name'] }}&course={{ course['course_subject'] }} {{ course['course_num'] }} {{ course['title'] }}"
+            class="mybtn btn btn-primary d-block w-50 mx-auto" role="button">Edit Review</a>
         {% else %}
-        <a href="/write?scid={{ course['student_course_id'] }}&profName={{ course['prof_name'] }}&course={{ course['course_subject'] }} {{ course['course_num'] }} {{ course['title'] }}" class="danger btn btn-primary d-block w-50 mx-auto" role="button">Write Review</a>
+        <a href="/write?scid={{ course['student_course_id'] }}&profName={{ course['prof_name'] }}&course={{ course['course_subject'] }} {{ course['course_num'] }} {{ course['title'] }}"
+            class="danger btn btn-primary d-block w-50 mx-auto" role="button">Write Review</a>
         {% endif %}
         </a>
     </div>

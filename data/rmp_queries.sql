@@ -91,6 +91,7 @@ begin
 end$$
 delimiter ;
 
+
 drop function if exists pid_profname;
 delimiter $$
 create function pid_profname
@@ -108,9 +109,7 @@ begin
 end$$
 delimiter ;
 
-select pid_profname(5);
-
-
+-- select pid_profname(5);
 
 
 drop procedure if exists get_abilities;
@@ -123,7 +122,37 @@ end$$
 delimiter ;
 
 
+drop procedure if exists insert_review;
+delimiter $$
+create procedure insert_review
+(
+	in in_rating DECIMAL(2, 1),
+    in in_student_course_id INT,
+    in in_review_comment VARCHAR(1000),
+    in in_strength1 INT,
+    in in_strength2 INT,
+    in in_weakness1 INT,
+    in in_weakness2 INT
+)
+begin
+	insert into review (rating, student_course_id, review_comment, strength1, strength2, weakness1, weakness2) 
+    values (in_rating, in_student_course_id, in_review_comment, in_strength1, in_strength2, in_weakness1, in_weakness2); 
+end$$
+delimiter ;
+
+-- call insert_review(6.6, 6, "boop", 1, 2, NULL, 5)
 
 
+drop procedure if exists get_review;
+delimiter $$
+create procedure get_review
+(
+	in in_review_id INT
+)
+begin
+	select * from review where review_id = in_review_id;
+end$$
+delimiter ;
 
+call get_review(5);
 

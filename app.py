@@ -125,14 +125,37 @@ def write():
 
 @app.route("/edit", methods=["GET"])
 def edit():
+    profName = request.args.get("profName")
+    courseName = request.args.get("course")
+    review = database.get_review(request.args["review"])
+    abilities = database.getAbilities()
     return render_template(
-        "write.html", professor="Kathleen Durane", course="CS3200 Database Design"
+        "edit.html",
+        professor=profName,
+        course=courseName,
+        review=review,
+        abilities=abilities,
     )
 
 
 @app.route("/write/review", methods=["POST"])
 def writeReview():
-    print("received review")
+    # print("received review")
+    # rating = request.form["rating"]
+    # comment = request.form["comment"]
+    # for item in request.form.items():
+    #     print(item)
+    database.create_review(request.args["scid"], request.form)
+    return redirect(url_for("courses"))
+
+
+@app.route("/edit/review", methods=["POST"])
+def editReview():
+    # print("received review")
+    # rating = request.form["rating"]
+    # comment = request.form["comment"]
+    # for item in request.form.items():
+    #     print(item)
     for item in request.form.items():
         print(item)
     return redirect(url_for("courses"))

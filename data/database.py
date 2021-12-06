@@ -133,7 +133,6 @@ def getStudentCourses(nuid):
             course["review_id"] = getStudentCourseReview(course["student_course_id"])
             course["prof_name"] = getProfName(course["pid"])
 
-        print(courses)
     except pymysql.err.OperationalError as e:
         print(e)
     cur.close()
@@ -151,3 +150,33 @@ def getAbilities():
         print(e)
     cur.close()
     return abilities
+
+
+def create_review(scid, review):
+    cur = cnx.cursor()
+    try:
+        rating = float(review["rating"])
+        comment = review["comment"]
+        str1 = None if review["str1"] == "-1" else int(review["str1"])
+        str2 = None if review["str2"] == "-1" else int(review["str2"])
+        wk1 = None if review["wk1"] == "-1" else int(review["wk1"])
+        wk2 = None if review["wk2"] == "-1" else int(review["wk2"])
+        cur.callproc("insert_review", [rating, scid, comment, str1, str2, wk1, wk2])
+        cur.fetchall()
+        cnx.commit()
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+
+
+def get_review(review_id):
+    cur = cnx.cursor()
+    review = []
+    try:
+        cur.callproc("get_review", [review_id])
+        review = cur.fetchall()[0]
+        print(review)
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+    return review
