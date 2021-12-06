@@ -91,6 +91,25 @@ begin
 end$$
 delimiter ;
 
+drop function if exists pid_profname;
+delimiter $$
+create function pid_profname
+(
+	in_pid int
+)
+returns varchar (61)
+deterministic reads sql data
+begin
+	declare profname varchar(61);
+    set profname = 
+    (select concat(fname, " ", lname) from professor p
+    where p.pid = in_pid );
+    return profname;
+end$$
+delimiter ;
+
+select pid_profname(5);
+
 
 
 
