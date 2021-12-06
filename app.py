@@ -1,5 +1,5 @@
 from flask import Flask, session, render_template, request, redirect, url_for
-from data import database 
+from data import database
 
 app = Flask(__name__)
 app.secret_key = "REALLYSECRET"
@@ -68,25 +68,8 @@ def search():
 def courses():
     if "user" not in session:
         return redirect(url_for("login"))
-    
+
     courses = database.getStudentCourses(session["user"])
-    
-    # [
-    #     {
-    #         "subject": "CS",
-    #         "num": 1800,
-    #         "semester": "Fall2020",
-    #         "title": "Discrete Structures",
-    #         "reviewed": True,
-    #     },
-    #     {
-    #         "subject": "CS",
-    #         "num": 3200,
-    #         "semester": "Fall2020",
-    #         "title": "Database Design",
-    #         "reviewed": False,
-    #     },
-    # ]
     return render_template("courses.html", courses=courses)
 
 
@@ -121,7 +104,7 @@ def course():
 
 @app.route("/write", methods=["GET"])
 def write():
-    
+
     args = request.args.items()
     for arg in args:
         print(arg)
@@ -129,22 +112,29 @@ def write():
     profName = request.args.get("profName")
     courseName = request.args.get("course")
     studentCourseId = request.args.get("scid")
+    abilities = database.getAbilities()
 
     return render_template(
-        "write.html", professor=profName, course=courseName, scid=studentCourseId
+        "write.html",
+        professor=profName,
+        course=courseName,
+        scid=studentCourseId,
+        abilities=abilities,
     )
 
 
 @app.route("/edit", methods=["GET"])
 def edit():
-    
     return render_template(
         "write.html", professor="Kathleen Durane", course="CS3200 Database Design"
     )
 
+
 @app.route("/write/review", methods=["POST"])
 def writeReview():
-    print("received review " + str(request))
+    print("received review")
+    for item in request.form.items():
+        print(item)
     return redirect(url_for("courses"))
 
 

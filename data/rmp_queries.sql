@@ -70,7 +70,7 @@ begin
 end$$
 delimiter ;
 
-select sid_semester(4);
+-- select sid_semester(4); 
 
 drop function if exists student_course_review;
 delimiter $$
@@ -90,6 +90,19 @@ begin
     return stud_course_review;
 end$$
 delimiter ;
+
+
+
+
+drop procedure if exists get_abilities;
+delimiter $$
+create procedure get_abilities
+()
+begin
+	select * from abilities;
+end$$
+delimiter ;
+
 
 
 
