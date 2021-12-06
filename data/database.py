@@ -85,8 +85,75 @@ def getStudent(nuid):
     return student
 
 
+
 # =====================================================================
 # STUDENT_COURSE DATABASE FUNCTIONS
+
+def getSemester(sid):
+    cur = cnx.cursor()
+    semester = ""
+    try:
+        sem_select = 'sid_semester({})'.format(sid)
+        cur.execute("select " + sem_select)
+        
+        res = cur.fetchall()
+        semester = res[0][sem_select]
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+    return semester
+
+def getStudentCourseReview(student_course_id):
+    cur = cnx.cursor()
+    review_id = -1
+    
+    try:
+        review_select = 'student_course_review({})'.format(student_course_id)
+        cur.execute("select " + review_select)
+        
+        res = cur.fetchall()
+        review_id = res[0][review_select]
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+    return review_id
+
+def getProfName(pid):
+    cur = cnx.cursor()
+    profname = ""
+    try:
+        sem_select = 'pid_profname({})'.format(pid)
+        cur.execute("select " + sem_select)
+        
+        res = cur.fetchall()
+        profname = res[0][sem_select]
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+    return profname
+
+
+
+def getStudentCourses(nuid):
+    cur = cnx.cursor()
+    courses = []
+    try:
+        cur.callproc("get_student_courses", [nuid])
+        courses = cur.fetchall()
+
+        for course in courses:
+            course["semester"] = getSemester(course["sid"])
+            course["review_id"] = getStudentCourseReview(course["student_course_id"])
+            course["prof_name"] = getProfName(course["pid"])
+
+        print(courses)
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+
+    return courses
+
+
 
 
 # =====================================================================

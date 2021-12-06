@@ -70,7 +70,27 @@ begin
 end$$
 delimiter ;
 
--- select sid_semester(7);
+select sid_semester(4);
+
+drop function if exists student_course_review;
+delimiter $$
+create function student_course_review
+(
+	in_student_course_id int
+)
+returns int
+deterministic reads sql data
+begin
+	declare stud_course_review int;
+	set stud_course_review = (select review_id from review r where r.student_course_id = in_student_course_id);
+    
+    if stud_course_review is NULL then set stud_course_review = -1;
+    end if;
+    
+    return stud_course_review;
+end$$
+delimiter ;
+
 
 
 
