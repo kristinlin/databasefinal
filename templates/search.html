@@ -47,7 +47,7 @@ Search Reviews
         </div>
     </div>
     {% for result in results %}
-    <a href="/course?cid={{ result['pid'] }}&pid={{ result['pid'] }}&prof={{ course['col3'] }}&course={{ course['col1'] }} {{ course['col2'] }}" class="row py-2 myresult">
+    <a href="/course?cid={{ result['pid'] }}&pid={{ result['pid'] }}&prof={{ result['col3'] }}&course={{ result['col1'] }} {{ result['col2'] }}" class="row py-2 myresult">
         <div class="col-2">
             {{ result["col1"] }}
         </div>
