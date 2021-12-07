@@ -121,6 +121,91 @@ begin
 end$$
 delimiter ;
 
+drop procedure if exists get_course_subjects;
+delimiter $$
+create procedure get_course_subjects
+()
+begin
+	select DISTINCT(course_subject) from course;
+end$$
+delimiter ;
+
+drop procedure if exists get_course_nums;
+delimiter $$
+create procedure get_course_nums
+()
+begin
+	select DISTINCT(course_num) from course order by course_num ASC;
+end$$
+delimiter ;
+
+
+drop procedure if exists get_search;
+delimiter $$
+create procedure get_search
+(
+	in in_subject CHAR(4),
+    in in_course_num INT,
+    in in_professor_lname VARCHAR(30)
+)
+begin
+	if in_subject is not NULL and in_course_num is not NULL and in_professor_lname is not NULL then 
+		select cbp.cid, cbp.pid, c.course_subject, c.course_num, c.title, p.fname, p.lname from course_by_professor cbp,
+        (select * from course where course_subject = in_subject and course_num = in_course_num) c, 
+        (select pid, fname, lname from professor where lname = in_professor_lname) p
+        where cbp.pid = p.pid and cbp.cid = c.cid
+        group by cbp.cid, cbp.pid;
+	elseif in_subject is NULL and in_course_num is not NULL and in_professor_lname is not NULL then 
+		select cbp.cid, cbp.pid, c.course_subject, c.course_num, c.title, p.fname, p.lname from course_by_professor cbp,
+        (select * from course where course_num = in_course_num) c, 
+        (select pid, fname, lname from professor where lname = in_professor_lname) p
+        where cbp.pid = p.pid and cbp.cid = c.cid
+        group by cbp.cid, cbp.pid;
+	elseif in_subject is not NULL and in_course_num is NULL and in_professor_lname is not NULL then 
+		select cbp.cid, cbp.pid, c.course_subject, c.course_num, c.title, p.fname, p.lname from course_by_professor cbp,
+        (select * from course where course_subject = in_subject) c, 
+        (select pid, fname, lname from professor where lname = in_professor_lname) p
+        where cbp.pid = p.pid and cbp.cid = c.cid
+        group by cbp.cid, cbp.pid;
+	elseif in_subject is not NULL and in_course_num is not NULL and in_professor_lname is NULL then 
+		select cbp.cid, cbp.pid, c.course_subject, c.course_num, c.title, p.fname, p.lname from course_by_professor cbp,
+        (select * from course where course_subject = in_subject and course_num = in_course_num) c, 
+        (select pid, fname, lname from professor) p
+        where cbp.pid = p.pid and cbp.cid = c.cid
+        group by cbp.cid, cbp.pid;
+	elseif in_subject is NULL and in_course_num is NULL and in_professor_lname is not NULL then 
+		select cbp.cid, cbp.pid, c.course_subject, c.course_num, c.title, p.fname, p.lname from course_by_professor cbp,
+        course c, 
+        (select pid, fname, lname from professor where lname = in_professor_lname) p
+        where cbp.pid = p.pid and cbp.cid = c.cid
+        group by cbp.cid, cbp.pid;
+	elseif in_subject is NULL and in_course_num is not NULL and in_professor_lname is NULL then 
+		select cbp.cid, cbp.pid, c.course_subject, c.course_num, c.title, p.fname, p.lname from course_by_professor cbp,
+        (select * from course where course_num = in_course_num) c, 
+        (select pid, fname, lname from professor) p
+        where cbp.pid = p.pid and cbp.cid = c.cid
+        group by cbp.cid, cbp.pid;
+	elseif in_subject is not NULL and in_course_num is NULL and in_professor_lname is NULL then 
+		select cbp.cid, cbp.pid, c.course_subject, c.course_num, c.title, p.fname, p.lname from course_by_professor cbp,
+        (select * from course where course_subject = in_subject) c, 
+        (select pid, fname, lname from professor) p
+        where cbp.pid = p.pid and cbp.cid = c.cid
+        group by cbp.cid, cbp.pid;
+	end if;
+end$$
+delimiter ;
+
+call get_search("CS", 1800, "Hescat"); 
+
+call get_search("CS", 1800, NULL);
+call get_search("CS", NULL, "Hescat");
+call get_search(NULL, 1800, "Hescat");
+
+call get_search(NULL, NULL, "Hescat");
+call get_search(NULL, 1800, NULL);
+call get_search("CS", NULL, NULL);
+
+call get_search(NULL, NULL, NULL);
 
 drop procedure if exists insert_review;
 delimiter $$
@@ -176,5 +261,24 @@ begin
 end$$
 delimiter ;
 
+-- select * from review;
+-- call edit_review(6, 6.0, "I am edited!", 1, 2,3,4);
+
+drop procedure if exists delete_review;
+delimiter $$
+create procedure delete_review
+(
+	in in_review_id INT
+)
+begin
+	delete from review 
+    where review_id = in_review_id;
+end$$
+delimiter ;
+
 select * from review;
+
+
+
+
 

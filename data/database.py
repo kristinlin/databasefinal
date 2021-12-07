@@ -152,16 +152,70 @@ def getAbilities():
     cur.close()
     return abilities
 
+def getCourseSubjects():
+    cur = cnx.cursor()
+    subjects = []
+    try:
+        cur.callproc("get_course_subjects", [])
+        subjects = cur.fetchall()
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+    return subjects
+
+def getCourseNums():
+    cur = cnx.cursor()
+    course_nums = []
+    try:
+        cur.callproc("get_course_nums", [])
+        course_nums = cur.fetchall()
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+    return course_nums
+
+
+def getSearch(search):
+    courseSubject = None if search["courseSubject"] == "" else search["courseSubject"]
+    courseNum = None if search["courseNum"] == "" else search["courseNum"]
+    professor = None if search["professor"] == "" else search["professor"].capitalize()
+
+    cur = cnx.cursor()
+    results = []
+    try:
+        cur.callproc("get_search", [courseSubject, courseNum, professor])
+        raw_results = cur.fetchall()
+        print(raw_results)
+        for raw_result in raw_results:
+            result = {}
+            result["cid"] = raw_result["cid"]
+            result["pid"] = raw_result["pid"]
+            result["col1"] = raw_result["course_subject"] + " " + str(raw_result["course_num"])
+            result["col2"] = raw_result["title"]
+            result["col3"] = raw_result["fname"] + " " + raw_result["lname"]
+            results.append(result)
+        print(results)
+        cnx.commit()
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+    return results
+
+
+# ==============================================================
+# REVIEW DATABASE FUNCTIONS
+
 
 def create_review(scid, review):
     cur = cnx.cursor()
+
+    rating = float(review["rating"])
+    comment = review["comment"]
+    str1 = None if review["str1"] == "-1" else int(review["str1"])
+    str2 = None if review["str2"] == "-1" else int(review["str2"])
+    wk1 = None if review["wk1"] == "-1" else int(review["wk1"])
+    wk2 = None if review["wk2"] == "-1" else int(review["wk2"])
     try:
-        rating = float(review["rating"])
-        comment = review["comment"]
-        str1 = None if review["str1"] == "-1" else int(review["str1"])
-        str2 = None if review["str2"] == "-1" else int(review["str2"])
-        wk1 = None if review["wk1"] == "-1" else int(review["wk1"])
-        wk2 = None if review["wk2"] == "-1" else int(review["wk2"])
         cur.callproc("insert_review", [rating, scid, comment, str1, str2, wk1, wk2])
         cnx.commit()
     except pymysql.err.OperationalError as e:
@@ -197,3 +251,12 @@ def edit_review(review_id, new_review):
         print(e)
     cur.close()
 
+def delete_review(review_id):
+    cur = cnx.cursor()
+
+    try:
+        cur.callproc("delete_review", [review_id])
+        cnx.commit()
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()

@@ -8,29 +8,25 @@ Search Reviews
 <form class="row" action="/search" method="POST">
     <div class="col-auto">
         <label for="searchSubject">Course Subject</label>
-        <select class="form-control" id="searchSubject">
+        <select class="form-control" id="searchSubject" name="courseSubject">
             <option></option>
-            {% for s in subject %}
-            <option>{{ s }}</option>
+            {% for s in courseSubjects %}
+            <option>{{ s['course_subject'] }}</option>
             {% endfor %}
-            <option>CS</option>
-            <option>MATH</option>
         </select>
     </div>
     <div class="col-auto">
         <label for="searchCourseNum">Course Number</label>
-        <select class="form-control" id="searchCourseNum">
+        <select class="form-control" id="searchCourseNum" name="courseNum">
             <option></option>
             {% for num in courseNum %}
-            <option>{{ num }}</option>
+            <option>{{ num['course_num'] }}</option>
             {% endfor %}
-            <option>1800</option>
-            <option>3200</option>
         </select>
     </div>
     <div class="col-auto">
-        <label for="searchprof">Professor</label>
-        <input type="text" class="form-control" id="searchprof" placeholder="Kathleen Durane">
+        <label for="searchprof">Professor Last Name</label>
+        <input type="text" class="form-control" id="searchprof" placeholder="e.g. Hescat" name="professor">
     </div>
     <div class="col-auto mt-auto">
         <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
@@ -51,7 +47,7 @@ Search Reviews
         </div>
     </div>
     {% for result in results %}
-    <a href="/course?courseId={{ result['id'] }}" class="row py-2 myresult">
+    <a href="/course?cid={{ result['pid'] }}&pid={{ result['pid'] }}&prof={{ course['col3'] }}&course={{ course['col1'] }} {{ course['col2'] }}" class="row py-2 myresult">
         <div class="col-2">
             {{ result["col1"] }}
         </div>
@@ -64,5 +60,9 @@ Search Reviews
     </a>
     {% endfor %}
 </div>
+{% endif %}
+
+{% if noneFound %}
+<div class="danger row my-5">No search results found.</div>
 {% endif %}
 {% endblock %}

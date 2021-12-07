@@ -53,14 +53,18 @@ def search():
     if "user" not in session:
         return redirect(url_for("login"))
     results = []
+    noneFound = False;
     if request.method == "POST":
-        # TODO actually find the results
-        results = [
-            {"id": "123", "col1": "hello", "col2": "hello2", "col3": "hello3"},
-            {"id": "123", "col1": "hello", "col2": "hello2", "col3": "hello3"},
-        ]
+        results = database.getSearch(request.form)
+        noneFound = len(results) == 0
+        print(results)
+        print(noneFound)
     return render_template(
-        "search.html", courseNum=["tester1", "tsester2"], results=results
+        "search.html", 
+        courseSubjects=database.getCourseSubjects(), 
+        courseNum=database.getCourseNums(), 
+        results=results,
+        noneFound=noneFound
     )
 
 
@@ -77,7 +81,10 @@ def courses():
 def course():
     semester = "All semesters"
     like = False
-    courseId = request.args.get("courseId")
+    cid = request.args.get("cid")
+    pid = request.args.get("pid")
+    prof = request.args.get("prof")
+    course = request.args.get("course")
     if "semester" in request.args:
         semester = request.args.get("semester")
     if "like" in request.args:
@@ -93,9 +100,9 @@ def course():
 
     return render_template(
         "course.html",
-        professor="Kathleen Durane",
-        courseId=courseId,
-        course="CS3200 Database Design",
+        professor=prof,
+        courseId=cid,
+        course=course,
         semester=semester,
         reviews=reviews,
         like=like,
@@ -151,10 +158,11 @@ def writeReview():
 
 @app.route("/edit/review", methods=["POST"])
 def editReview():
-    
-    database.edit_review(request.args["review_id"], request.form)
+    if "save" in request.form:
+        database.edit_review(request.args["review_id"], request.form)
+    else: 
+        database.delete_review(request.args["review_id"])
     return redirect(url_for("courses"))
-
 
 if __name__ == "__main__":
     database.connectDb()
