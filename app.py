@@ -37,10 +37,10 @@ def logout():
 def account():
     if "user" not in session:
         return redirect(url_for("login"))
-    changePwd = False
+    changePwd = ""
     if request.method == "POST":
         pwd = request.form["pwd"]
-        changePwd = database.update_password(session["user"], pwd)
+        changePwd = str(database.update_password(session["user"], pwd.strip()))
     return render_template(
         "account.html",
         student=database.getStudent(session["user"]),
@@ -57,8 +57,6 @@ def search():
     if request.method == "POST":
         results = database.getSearch(request.form)
         noneFound = len(results) == 0
-        print(results)
-        print(noneFound)
     return render_template(
         "search.html", 
         courseSubjects=database.getCourseSubjects(), 

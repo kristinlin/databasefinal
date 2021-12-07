@@ -49,9 +49,10 @@ def update_password(nuid, newPwd):
     cur = cnx.cursor()
     success = False
     try:
-        cur.callproc("update_pwd", [nuid, newPwd])
-        success = True
-        cnx.commit()
+        if newPwd != "":
+            cur.callproc("update_pwd", [nuid, newPwd])
+            success = True
+            cnx.commit()
     except pymysql.err.OperationalError as e:
         print(e)
     cur.close()
@@ -178,7 +179,7 @@ def getCourseNums():
 def getSearch(search):
     courseSubject = None if search["courseSubject"] == "" else search["courseSubject"]
     courseNum = None if search["courseNum"] == "" else search["courseNum"]
-    professor = None if search["professor"] == "" else search["professor"].capitalize()
+    professor = None if search["professor"] == "" else search["professor"].strip().capitalize()
 
     cur = cnx.cursor()
     results = []
