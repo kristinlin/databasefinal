@@ -156,3 +156,25 @@ delimiter ;
 
 call get_review(5);
 
+
+drop procedure if exists edit_review;
+delimiter $$
+create procedure edit_review
+(
+	in in_review_id INT,
+    in in_rating DECIMAL(2, 1),
+    in in_review_comment VARCHAR(1000),
+    in in_strength1 INT,
+    in in_strength2 INT,
+    in in_weakness1 INT,
+    in in_weakness2 INT
+)
+begin
+	update review 
+    set rating = in_rating, review_comment = in_review_comment, strength1=in_strength1, strength2=in_strength2, weakness1=in_weakness1, weakness2=in_weakness2
+    where review_id = in_review_id;
+end$$
+delimiter ;
+
+select * from review;
+

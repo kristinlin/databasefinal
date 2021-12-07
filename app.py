@@ -151,13 +151,8 @@ def writeReview():
 
 @app.route("/edit/review", methods=["POST"])
 def editReview():
-    # print("received review")
-    # rating = request.form["rating"]
-    # comment = request.form["comment"]
-    # for item in request.form.items():
-    #     print(item)
-    for item in request.form.items():
-        print(item)
+    
+    database.edit_review(request.args["review_id"], request.form)
     return redirect(url_for("courses"))
 
 

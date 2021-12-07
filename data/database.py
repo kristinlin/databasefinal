@@ -51,6 +51,7 @@ def update_password(nuid, newPwd):
     try:
         cur.callproc("update_pwd", [nuid, newPwd])
         success = True
+        cnx.commit()
     except pymysql.err.OperationalError as e:
         print(e)
     cur.close()
@@ -162,7 +163,6 @@ def create_review(scid, review):
         wk1 = None if review["wk1"] == "-1" else int(review["wk1"])
         wk2 = None if review["wk2"] == "-1" else int(review["wk2"])
         cur.callproc("insert_review", [rating, scid, comment, str1, str2, wk1, wk2])
-        cur.fetchall()
         cnx.commit()
     except pymysql.err.OperationalError as e:
         print(e)
@@ -180,3 +180,20 @@ def get_review(review_id):
         print(e)
     cur.close()
     return review
+
+def edit_review(review_id, new_review):
+    cur = cnx.cursor()
+
+    try:
+        rating = float(new_review["rating"])
+        comment = new_review["comment"]
+        str1 = None if new_review["str1"] == "-1" else int(new_review["str1"])
+        str2 = None if new_review["str2"] == "-1" else int(new_review["str2"])
+        wk1 = None if new_review["wk1"] == "-1" else int(new_review["wk1"])
+        wk2 = None if new_review["wk2"] == "-1" else int(new_review["wk2"])
+        cur.callproc("edit_review", [review_id, rating, comment, str1, str2, wk1, wk2])
+        cnx.commit()
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+
