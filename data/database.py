@@ -7,13 +7,13 @@ def connectDb():
     global cnx
     valid_login = False
     while not valid_login:
-        username = input("Enter your username: ")
-        pwd = input("Enter your password: ")
+        # username = input("Enter your username: ")
+        # pwd = input("Enter your password: ")
         try:
             cnx = pymysql.connect(
                 host="localhost",
-                user=username,
-                password=pwd,
+                user="hw8",
+                password="Homework8!",
                 db="das_a_link_dd",
                 charset="utf8mb4",
                 cursorclass=pymysql.cursors.DictCursor,
@@ -153,6 +153,7 @@ def getAbilities():
     cur.close()
     return abilities
 
+
 def getCourseSubjects():
     cur = cnx.cursor()
     subjects = []
@@ -163,6 +164,7 @@ def getCourseSubjects():
         print(e)
     cur.close()
     return subjects
+
 
 def getCourseNums():
     cur = cnx.cursor()
@@ -176,10 +178,63 @@ def getCourseNums():
     return course_nums
 
 
+def getSemesters(cid, pid):
+    cur = cnx.cursor()
+    semesters = []
+    try:
+        cur.callproc("get_semesters", [cid, pid])
+        semesters = cur.fetchall()
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+    return semesters
+
+
+def getReviewsForCourse(nuid, cid, pid, sid):
+    cur = cnx.cursor()
+    reviews = []
+    try:
+        sid = None if sid == "-1" else int(sid)
+        cur.callproc("get_reviews_for_course", [nuid, cid, pid, sid])
+        reviews = cur.fetchall()
+        for review in reviews:
+            review["rating"] = str(review["rating"])
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+    return reviews
+
+
+def studentLikesReview(nuid, review_id):
+    cur = cnx.cursor()
+    nuid = int(nuid)
+    review_id = int(review_id)
+    try:
+        cur.callproc("insert_like", [nuid, review_id])
+        cnx.commit()
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+
+
+def studentRemoveLikeReview(nuid, review_id):
+    cur = cnx.cursor()
+    nuid = int(nuid)
+    review_id = int(review_id)
+    try:
+        cur.callproc("delete_like", [nuid, review_id])
+        cnx.commit()
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+
+
 def getSearch(search):
     courseSubject = None if search["courseSubject"] == "" else search["courseSubject"]
     courseNum = None if search["courseNum"] == "" else search["courseNum"]
-    professor = None if search["professor"] == "" else search["professor"].strip().capitalize()
+    professor = (
+        None if search["professor"] == "" else search["professor"].strip().capitalize()
+    )
 
     cur = cnx.cursor()
     results = []
@@ -191,7 +246,9 @@ def getSearch(search):
             result = {}
             result["cid"] = raw_result["cid"]
             result["pid"] = raw_result["pid"]
-            result["col1"] = raw_result["course_subject"] + " " + str(raw_result["course_num"])
+            result["col1"] = (
+                raw_result["course_subject"] + " " + str(raw_result["course_num"])
+            )
             result["col2"] = raw_result["title"]
             result["col3"] = raw_result["fname"] + " " + raw_result["lname"]
             results.append(result)
@@ -236,6 +293,7 @@ def get_review(review_id):
     cur.close()
     return review
 
+
 def edit_review(review_id, new_review):
     cur = cnx.cursor()
 
@@ -251,6 +309,7 @@ def edit_review(review_id, new_review):
     except pymysql.err.OperationalError as e:
         print(e)
     cur.close()
+
 
 def delete_review(review_id):
     cur = cnx.cursor()

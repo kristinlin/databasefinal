@@ -137,4 +137,31 @@ CONSTRAINT slr_review_id_fk
     ON DELETE cascade
 );
 
+DROP TRIGGER IF EXISTS add_review_likes_insert;
+DELIMITER $$
+
+CREATE TRIGGER add_review_likes_insert	
+AFTER INSERT ON student_likes_review
+FOR EACH ROW
+BEGIN
+
+update review set likes = likes + 1 where review_id=new.review_id;
+
+END $$
+
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS subtract_review_likes_delete;
+DELIMITER $$
+
+CREATE TRIGGER subtract_review_likes_delete	
+BEFORE DELETE ON student_likes_review
+FOR EACH ROW
+BEGIN
+
+update review set likes = likes - 1 where review_id = old.review_id;
+
+END $$
+
+DELIMITER ;
 

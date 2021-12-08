@@ -53,16 +53,16 @@ def search():
     if "user" not in session:
         return redirect(url_for("login"))
     results = []
-    noneFound = False;
+    noneFound = False
     if request.method == "POST":
         results = database.getSearch(request.form)
         noneFound = len(results) == 0
     return render_template(
-        "search.html", 
-        courseSubjects=database.getCourseSubjects(), 
-        courseNum=database.getCourseNums(), 
+        "search.html",
+        courseSubjects=database.getCourseSubjects(),
+        courseNum=database.getCourseNums(),
         results=results,
-        noneFound=noneFound
+        noneFound=noneFound,
     )
 
 
@@ -77,32 +77,60 @@ def courses():
 
 @app.route("/course", methods=["GET"])
 def course():
-    semester = "All semesters"
     like = False
     cid = request.args.get("cid")
     pid = request.args.get("pid")
     prof = request.args.get("prof")
     course = request.args.get("course")
+
+    selectedSemester = "-1"
+    selectedSemesterName = "All Semesters"
     if "semester" in request.args:
-        semester = request.args.get("semester")
+        selectedSemester = request.args.get("semester")
+        selectedSemesterName = request.args.get("semesterName")
     if "like" in request.args:
         like = request.args.get("like") == "True"
-    reviews = [
-        {
-            "id": 123,
-            "comment": "Wooohoo my comment is here",
-            "rating": 9.6,
-            "helpful": 6,
-        }
-    ]
+        if like:
+            database.studentLikesReview(session["user"], request.args.get("reviewId"))
+        else:
+            database.studentRemoveLikeReview(
+                session["user"], request.args.get("reviewId")
+            )
 
+    reviews = database.getReviewsForCourse(
+        int(session["user"]), cid, pid, selectedSemester
+    )
+    semesters = database.getSemesters(cid, pid)
     return render_template(
         "course.html",
         professor=prof,
-        courseId=cid,
+        pid=pid,
+        cid=cid,
         course=course,
-        semester=semester,
+        selectedSemester=selectedSemester,
+        selectedSemesterName=selectedSemesterName,
+        semesters=semesters,
         reviews=reviews,
+        reviewRatings=[str(review["rating"]) for review in reviews],
+        abilities=[a["description"] for a in database.getAbilities()],
+        reviewStrengths=["enthusiasm"],
+        #     review["strength1"] for review in reviews if review["strength1"] is not None
+        # ].append(
+        #     [
+        #         review["strength2"]
+        #         for review in reviews
+        #         if review["strength1"] is not None
+        #     ]
+        # ),
+        reviewWeaknesses=["interactive"],
+        #     review["weakness1"] for review in reviews if review["strength1"] is not None
+        # ].append(
+        #     [
+        #         review["weakness2"]
+        #         for review in reviews
+        #         if review["strength1"] is not None
+        #     ]
+        # ),
         like=like,
     )
 
@@ -158,9 +186,10 @@ def writeReview():
 def editReview():
     if "save" in request.form:
         database.edit_review(request.args["review_id"], request.form)
-    else: 
+    else:
         database.delete_review(request.args["review_id"])
     return redirect(url_for("courses"))
+
 
 if __name__ == "__main__":
     database.connectDb()

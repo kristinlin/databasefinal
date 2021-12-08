@@ -150,7 +150,7 @@ create procedure get_search
 )
 begin
 	if in_subject is not NULL and in_course_num is not NULL and in_professor_lname is not NULL then 
-		select cbp.cid, cbp.pid, c.course_subject, c.course_num, c.title, p.fname, p.lname from course_by_professor cbp,
+		select cbp.cid, cbp.pid,c.course_subject, c.course_num, c.title, p.fname, p.lname from course_by_professor cbp,
         (select * from course where course_subject = in_subject and course_num = in_course_num) c, 
         (select pid, fname, lname from professor where lname = in_professor_lname) p
         where cbp.pid = p.pid and cbp.cid = c.cid
@@ -279,6 +279,109 @@ delimiter ;
 select * from review;
 
 
+drop procedure if exists get_semesters;
+delimiter $$
+create procedure get_semesters
+(
+	in in_cid INT,
+    in in_pid INT
+)
+begin
+	select sid, sid_semester(sid) as sem_name from course_by_professor where cid = in_cid and pid = in_pid;
+end$$
+delimiter ;
 
+call get_semesters(3, 3);
+
+
+
+-- drop procedure if exists get_reviews_for_course;
+-- delimiter $$
+-- create procedure get_reviews_for_course
+-- (
+-- 	in in_cid INT,
+--     in in_pid INT,
+--     in in_sid INT
+-- )
+-- begin
+-- 	if in_sid is NULL then
+-- 		select * from review where student_course_id in
+-- 		(select student_course_id from student_course where cbp_id in
+-- 		(select cbp_id from course_by_professor where cid = in_cid and pid = in_pid)); 
+-- 	else
+-- 		select *, in_sid from review where student_course_id in
+-- 		(select student_course_id from student_course where cbp_id in
+-- 		(select cbp_id from course_by_professor where cid = in_cid and pid = in_pid and sid = in_sid)); 
+-- 	end if;
+-- end$$
+-- delimiter ;
+
+drop procedure if exists get_reviews_for_course;
+delimiter $$
+create procedure get_reviews_for_course
+(
+	in in_nuid INT,
+    in in_cid INT,
+    in in_pid INT,
+    in in_sid INT
+)
+begin
+	if in_sid is NULL then
+		select r.*, sid_semester(c.sid) sem_name, student_liked_review(in_nuid, r.review_id) student_liked_review from review r, student_course s, course_by_professor c
+        where c.cid = in_cid and c.pid = in_pid and r.student_course_id =  s.student_course_id and s.cbp_id = c.cbp_id;
+	else
+		select r.*, sid_semester(in_sid) sem_name, student_liked_review(in_nuid, r.review_id) student_liked_review from review r where student_course_id in
+		(select student_course_id from student_course where cbp_id in
+		(select cbp_id from course_by_professor where cid = in_cid and pid = in_pid and sid = in_sid)); 
+	end if;
+end$$
+delimiter ;
+
+call get_reviews_for_course(2, 3, 3, NULL);
+call get_reviews_for_course(2, 3, 3, 4);
+-- 
+-- select * from student_course;
+drop procedure if exists insert_like;
+delimiter $$
+create procedure insert_like
+(
+	in in_nuid INT,
+    in in_review_id INT
+)
+begin
+	insert into student_likes_review (nuid, review_id) values (in_nuid, in_review_id);
+end$$
+delimiter ;
+
+drop procedure if exists delete_like;
+delimiter $$
+create procedure delete_like
+(
+	in in_nuid INT,
+    in in_review_id INT
+)
+begin
+	delete from student_likes_review where in_nuid=nuid and in_review_id=review_id;
+end$$
+delimiter ;
+
+
+
+drop function if exists student_liked_review;
+delimiter $$
+create function student_liked_review
+(
+	in_nuid INT,
+    in_review_id INT
+)
+returns bool
+deterministic reads sql data
+begin
+	declare review_liked bool;
+    set review_liked = 
+    (select count(*) from student_likes_review s where s.nuid = in_nuid and s.review_id = in_review_id) > 0;
+    return review_liked;
+end$$
+delimiter ;
 
 

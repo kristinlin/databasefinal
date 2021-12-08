@@ -18,12 +18,18 @@
         <div class="dropdown floatr">
             <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{ semester }}
+                {{ selectedSemesterName }}
             </a>
 
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="/course?courseId={{ courseId }}&semester=All Semesters">All Semesters</a>
-                <a class="dropdown-item" href="/course?courseId={{ courseId }}&semester=Fall2020">Fall2020</a>
+                <a class="dropdown-item"
+                    href="/course?cid={{ cid }}&pid={{ pid }}&prof={{ professor }}&course={{ course }}&semester=-1&semesterName=All Semesters">All
+                    Semesters</a>
+                {% for s in semesters %}
+                <a class="dropdown-item"
+                    href="/course?cid={{ cid }}&pid={{ pid }}&prof={{ professor }}&course={{ course }}&semester={{ s['sid'] }}&semesterName={{ s['sem_name'] }}">{{
+                    s['sem_name'] }}</a>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -73,27 +79,30 @@
 {% for review in reviews %}
 <div class="row my-3">
     <div class="col-1">
-        {{ review["id"] }}
+        {{ review["review_id"] }}
     </div>
     <div class="col-1">
-        Fall2020
+        {{ review["sem_name"] }}
     </div>
     <div class="col">
-        {{ review["comment"] }}
+        {{ review["review_comment"] }}
     </div>
     <div class="col-2">
         {{ review["rating"] }}
     </div>
     <div class="col-2">
-        {% if like %}
-        <a href="/course?courseId={{ courseId }}&semester={{ semester }}&like=False"> <i
-                class="fas fa-thumbs-up"></i></a>
+        {% if review['student_liked_review'] == 1 %}
+        <a
+            href="/course?cid={{ cid }}&pid={{ pid }}&prof={{ professor }}&course={{ course }}&semester={{ selectedSemester }}&semesterName={{ selectedSemesterName }}&like=False&reviewId={{ review['review_id'] }}">
+            <i class="fas fa-thumbs-up"></i></a>
         {% else %}
-        <a href="/course?courseId={{ courseId }}&semester={{ semester }}&like=True"> <i class="far fa-thumbs-up"></i>
+        <a
+            href="/course?cid={{ cid }}&pid={{ pid }}&prof={{ professor }}&course={{ course }}&semester={{ selectedSemester }}&semesterName={{ selectedSemesterName }}&like=True&reviewId={{ review['review_id'] }}">
+            <i class="far fa-thumbs-up"></i>
         </a>
         {% endif %}
 
-        {{ review["helpful"] }}
+        {{ review["likes"] }}
     </div>
 </div>
 {% endfor %}
@@ -102,37 +111,66 @@
 
 {% block script %}
 <script>
+
+    let reviewRatings = {{ reviewRatings | safe }};
+    let abilities = {{ abilities | safe }};
+    let strengths = {{ reviewStrengths | safe }};
+    let weaknesses = {{ reviewWeaknesses | safe }};
+
+    const countRating = (reviewRatings, ratingLabel) => {
+        let count = 0;
+        for (let i = 0; i < reviewRatings.length; i++) {
+            if (reviewRatings[i] == ratingLabel.toString()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    const countAbilities = (listOfAbilites, ability) => {
+        let count = 0;
+        for (let i = 0; i < listOfAbilites.length; i++) {
+            if (listOfAbilites[i] == ability.toString()) {
+                count++;
+            }
+        }
+        return count;
+    }
+    let ratingLabels = new Array(91).fill(null).map((val, index) => (index + 10) / 10);
+    let reviewFrequency = ratingLabels.map(ratingLabel => countRating(reviewRatings, ratingLabel))
+    let strengthFrequency = abilities.map(ability => countAbilities(strengths, ability));
+    let weaknessFrequency = abilities.map(ability => countAbilities(weaknesses, ability));
+
     const ratingChart = document.getElementById('ratingChart').getContext('2d');
     const myRatingChart = new Chart(ratingChart, {
-        type: 'bar',
+        type: 'line',
         data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            labels: ratingLabels,
             datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
+                data: reviewFrequency,
+                borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 1
             }]
         },
         options: {
             scales: {
-                y: {
-                    beginAtZero: true
+                yAxes: {
+                    title: {
+                        display: true,
+                        text: 'Frequency'
+                    },
+                    ticks: {
+                        stepSize: 1
+                    }
+                },
+                xAxes: {
+                    title: {
+                        display: true,
+                        text: 'Rating'
+                    },
+                    ticks: {
+                        stepSize: 1
+                    }
                 }
             }
         }
@@ -142,10 +180,10 @@
     const myStrengthsChart = new Chart(strengthsChart, {
         type: 'doughnut',
         data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            labels: abilities,
             datasets: [{
                 label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
+                data: strengthFrequency,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -173,10 +211,10 @@
     const myWeaknessesChart = new Chart(weaknessesChart, {
         type: 'doughnut',
         data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            labels: abilities,
             datasets: [{
                 label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
+                data: weaknessFrequency,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
