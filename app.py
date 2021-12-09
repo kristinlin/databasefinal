@@ -91,7 +91,8 @@ def course():
     if "like" in request.args:
         like = request.args.get("like") == "True"
         if like:
-            database.studentLikesReview(session["user"], request.args.get("reviewId"))
+            database.studentLikesReview(
+                session["user"], request.args.get("reviewId"))
         else:
             database.studentRemoveLikeReview(
                 session["user"], request.args.get("reviewId")
@@ -100,6 +101,22 @@ def course():
     reviews = database.getReviewsForCourse(
         int(session["user"]), cid, pid, selectedSemester
     )
+
+    reviewRatings = [str(review["rating"]) for review in reviews]
+    reviewRatingsNum = [float(review["rating"]) for review in reviews]
+    avgRating = None if len(reviewRatingsNum) == 0 else sum(reviewRatingsNum) / len(reviewRatingsNum)
+    print(avgRating)
+
+    reviewStrengths = [review["strength1"]
+                       for review in reviews if review["strength1"] is not None]
+    reviewStrengths.extend([review["strength2"]
+                           for review in reviews if review["strength2"] is not None])
+
+    reviewWeaknesses = [review["weakness1"]
+                        for review in reviews if review["weakness1"] is not None]
+    reviewWeaknesses.extend(
+        [review["weakness2"] for review in reviews if review["weakness2"] is not None])
+
     semesters = database.getSemesters(cid, pid)
     return render_template(
         "course.html",
@@ -111,26 +128,13 @@ def course():
         selectedSemesterName=selectedSemesterName,
         semesters=semesters,
         reviews=reviews,
-        reviewRatings=[str(review["rating"]) for review in reviews],
-        abilities=[a["description"] for a in database.getAbilities()],
-        reviewStrengths=["enthusiasm"],
-        #     review["strength1"] for review in reviews if review["strength1"] is not None
-        # ].append(
-        #     [
-        #         review["strength2"]
-        #         for review in reviews
-        #         if review["strength1"] is not None
-        #     ]
-        # ),
-        reviewWeaknesses=["interactive"],
-        #     review["weakness1"] for review in reviews if review["strength1"] is not None
-        # ].append(
-        #     [
-        #         review["weakness2"]
-        #         for review in reviews
-        #         if review["strength1"] is not None
-        #     ]
-        # ),
+        reviewRatings=reviewRatings,
+        avgRating=avgRating,
+        abilityDescriptions=[a["description"]
+                             for a in database.getAbilities()],
+        abilityIds=[a["aid"] for a in database.getAbilities()],
+        reviewStrengths=reviewStrengths,
+        reviewWeaknesses=reviewWeaknesses,
         like=like,
     )
 
