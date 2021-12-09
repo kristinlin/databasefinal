@@ -7,13 +7,13 @@ def connectDb():
     global cnx
     valid_login = False
     while not valid_login:
-        # username = input("Enter your username: ")
-        # pwd = input("Enter your password: ")
+        username = input("Enter your username: ")
+        pwd = input("Enter your password: ")
         try:
             cnx = pymysql.connect(
                 host="localhost",
-                user="hw8",
-                password="Homework8!",
+                user=username,
+                password=pwd,
                 db="das_a_link_dd",
                 charset="utf8mb4",
                 cursorclass=pymysql.cursors.DictCursor,
