@@ -94,3 +94,8 @@ textarea {
 .unlike {
     color:  rgb(35, 131, 160);
 }
+
+.navTitle {
+    font-family: 'Outfit', sans-serif;
+    font-size: x-large;
+}
