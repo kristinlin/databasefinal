@@ -21,8 +21,7 @@ DROP TABLE IF EXISTS semester;
 CREATE TABLE semester (
 sid INT		PRIMARY KEY		AUTO_INCREMENT,
 sem_year YEAR(4) NOT NULL,
-sem_season VARCHAR(10) NOT NULL,
-is_active BOOLEAN DEFAULT 0
+sem_season VARCHAR(10) NOT NULL
 );
 
 DROP TABLE IF EXISTS course_by_professor;
@@ -31,7 +30,6 @@ cbp_id INT PRIMARY KEY AUTO_INCREMENT,
 cid INT NOT NULL,
 pid INT NOT NULL,
 sid INT NOT NULL,
-num_students INT NOT NULL DEFAULT 0,
 unique key cid_pid_sid (cid, pid, sid),
 CONSTRAINT cbp_cid_fk 
 	FOREIGN KEY (cid) 
@@ -63,7 +61,6 @@ CREATE TABLE student_course (
 student_course_id INT PRIMARY KEY AUTO_INCREMENT,
 nuid  	INT		NOT NULL,
 cbp_id 	INT		NOT NULL,
-is_active BOOLEAN NOT NULL DEFAULT 1,
 UNIQUE KEY (nuid, cbp_id),
 CONSTRAINT student_course_nuid_fk 
 	FOREIGN KEY (nuid) 
