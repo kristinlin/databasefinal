@@ -44,7 +44,7 @@
 
 </div>
 
-<div class="row my-5">
+<div class="row my-5 pb-5">
     <div class="col">
         <h3>Strengths</h3>
         <div class="mt-4 px-5 mx-5">
@@ -59,53 +59,55 @@
     </div>
 </div>
 
-<div class="row bg-dark text-white mt-5">
-    <div class="col-1">
-        Review#
+<div class="mb-5">
+    <div class="row bg-dark text-white mt-5">
+        <div class="col-1">
+            Review#
+        </div>
+        <div class="col-1">
+            Semester
+        </div>
+        <div class="col">
+            Comment
+        </div>
+        <div class="col-2">
+            Rating
+        </div>
+        <div class="col-2">
+            Helpful
+        </div>
     </div>
-    <div class="col-1">
-        Semester
-    </div>
-    <div class="col">
-        Comment
-    </div>
-    <div class="col-2">
-        Rating
-    </div>
-    <div class="col-2">
-        Helpful
-    </div>
-</div>
-{% for review in reviews %}
-<div class="row my-3">
-    <div class="col-1">
-        {{ review["review_id"] }}
-    </div>
-    <div class="col-1">
-        {{ review["sem_name"] }}
-    </div>
-    <div class="col">
-        {{ review["review_comment"] }}
-    </div>
-    <div class="col-2">
-        {{ review["rating"] }}
-    </div>
-    <div class="col-2">
-        {% if review['student_liked_review'] == 1 %}
-        <a class="unlike"
-            href="/course?cid={{ cid }}&pid={{ pid }}&prof={{ professor }}&course={{ course }}&semester={{ selectedSemester }}&semesterName={{ selectedSemesterName }}&like=False&reviewId={{ review['review_id'] }}">
-            <i class="fas fa-thumbs-up"></i></a>
-        {% else %}
-        <a class="like"
-            href="/course?cid={{ cid }}&pid={{ pid }}&prof={{ professor }}&course={{ course }}&semester={{ selectedSemester }}&semesterName={{ selectedSemesterName }}&like=True&reviewId={{ review['review_id'] }}">
-            <i class="far fa-thumbs-up"></i>
-        </a>
-        {% endif %}
+    {% for review in reviews %}
+    <div class="row my-3">
+        <div class="col-1">
+            {{ review["review_id"] }}
+        </div>
+        <div class="col-1">
+            {{ review["sem_name"] }}
+        </div>
+        <div class="col">
+            {{ review["review_comment"] }}
+        </div>
+        <div class="col-2">
+            {{ review["rating"] }}
+        </div>
+        <div class="col-2">
+            {% if review['student_liked_review'] == 1 %}
+            <a class="unlike"
+                href="/course?cid={{ cid }}&pid={{ pid }}&prof={{ professor }}&course={{ course }}&semester={{ selectedSemester }}&semesterName={{ selectedSemesterName }}&like=False&reviewId={{ review['review_id'] }}">
+                <i class="fas fa-thumbs-up"></i></a>
+            {% else %}
+            <a class="like"
+                href="/course?cid={{ cid }}&pid={{ pid }}&prof={{ professor }}&course={{ course }}&semester={{ selectedSemester }}&semesterName={{ selectedSemesterName }}&like=True&reviewId={{ review['review_id'] }}">
+                <i class="far fa-thumbs-up"></i>
+            </a>
+            {% endif %}
 
-        {{ review["likes"] }}
+            {{ review["likes"] }}
+        </div>
     </div>
+    {% endfor %}
 </div>
-{% endfor %}
 {% endblock %}
 
 
@@ -139,19 +141,22 @@
     }
 
     let listColors = [
-    '#fff100',
-    '#ff8c00',
-    '#e81123',
-    '#ec008c',
-    '#68217a',
-    '#00188f',
-    '#00bcf2',
-    '#00b294',
-    '#009e49',
-    '#bad80a',
+        '#fff100',
+        '#ff8c00',
+        '#e81123',
+        '#ec008c',
+        '#68217a',
+        '#00188f',
+        '#00bcf2',
+        '#00b294',
+        '#009e49',
+        '#bad80a',
     ]
 
-    let ratingLabels = new Array(91).fill(null).map((val, index) => (index + 10) / 10);
+    let ratingLabels = new Array(91).fill(null).map((val, index) => {
+        let num = index + 10; return Math.floor(num / 10).toString() + "." + num % 10
+    });
+    console.log(ratingLabels);
     let reviewFrequency = ratingLabels.map(ratingLabel => countRating(reviewRatings, ratingLabel))
     let strengthFrequency = abilitiesId.map(ability => countAbilities(strengths, ability));
     let weaknessFrequency = abilitiesId.map(ability => countAbilities(weaknesses, ability));
@@ -169,13 +174,13 @@
             datasets: [{
                 label: 'Rating Frequency',
                 data: reviewFrequency,
-                borderColor:               gradientStroke,
-                pointBorderColor:          gradientStroke,
-                pointBackgroundColor:      gradientStroke,
+                borderColor: gradientStroke,
+                pointBorderColor: gradientStroke,
+                pointBackgroundColor: gradientStroke,
                 pointHoverBackgroundColor: gradientStroke,
-                pointHoverBorderColor:     gradientStroke
+                pointHoverBorderColor: gradientStroke
             }],
-            
+
         },
         options: {
             scales: {

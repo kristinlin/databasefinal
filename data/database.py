@@ -26,7 +26,7 @@ def connectDb():
 
 
 # =====================================================================
-# STUDENT DATABASE FUNCTIONS
+# STUDENT ACCOUNT DATABASE FUNCTIONS
 
 
 def student_login(nuid, pwd):
@@ -74,38 +74,7 @@ def getStudent(nuid):
 
 
 # =====================================================================
-# STUDENT_COURSE DATABASE FUNCTIONS
-
-
-def getSemester(sid):
-    cur = cnx.cursor()
-    semester = ""
-    try:
-        sem_select = "sid_semester({})".format(sid)
-        cur.execute("select " + sem_select)
-
-        res = cur.fetchall()
-        semester = res[0][sem_select]
-    except pymysql.err.OperationalError as e:
-        print(e)
-    cur.close()
-    return semester
-
-
-def getStudentCourseReview(student_course_id):
-    cur = cnx.cursor()
-    review_id = -1
-
-    try:
-        review_select = "student_course_review({})".format(student_course_id)
-        cur.execute("select " + review_select)
-
-        res = cur.fetchall()
-        review_id = res[0][review_select]
-    except pymysql.err.OperationalError as e:
-        print(e)
-    cur.close()
-    return review_id
+# GET DATABASE FUNCTIONS
 
 
 def getProfName(pid):
@@ -121,25 +90,6 @@ def getProfName(pid):
         print(e)
     cur.close()
     return profname
-
-
-def getStudentCourses(nuid):
-    cur = cnx.cursor()
-    courses = []
-    try:
-        cur.callproc("get_student_courses", [nuid])
-        courses = cur.fetchall()
-
-        for course in courses:
-            course["semester"] = getSemester(course["sid"])
-            course["review_id"] = getStudentCourseReview(course["student_course_id"])
-            course["prof_name"] = getProfName(course["pid"])
-
-    except pymysql.err.OperationalError as e:
-        print(e)
-    cur.close()
-
-    return courses
 
 
 def getAbilities():
@@ -178,6 +128,21 @@ def getCourseNums():
     return course_nums
 
 
+def getSemester(sid):
+    cur = cnx.cursor()
+    semester = ""
+    try:
+        sem_select = "sid_semester({})".format(sid)
+        cur.execute("select " + sem_select)
+
+        res = cur.fetchall()
+        semester = res[0][sem_select]
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+    return semester
+
+
 def getSemesters(cid, pid):
     cur = cnx.cursor()
     semesters = []
@@ -190,43 +155,39 @@ def getSemesters(cid, pid):
     return semesters
 
 
-def getReviewsForCourse(nuid, cid, pid, sid):
+def getStudentCourseReview(student_course_id):
     cur = cnx.cursor()
-    reviews = []
+    review_id = -1
+
     try:
-        sid = None if sid == "-1" else int(sid)
-        cur.callproc("get_reviews_for_course", [nuid, cid, pid, sid])
-        reviews = cur.fetchall()
-        for review in reviews:
-            review["rating"] = str(review["rating"])
+        review_select = "student_course_review({})".format(student_course_id)
+        cur.execute("select " + review_select)
+
+        res = cur.fetchall()
+        review_id = res[0][review_select]
     except pymysql.err.OperationalError as e:
         print(e)
     cur.close()
-    return reviews
+    return review_id
 
 
-def studentLikesReview(nuid, review_id):
+def getStudentCourses(nuid):
     cur = cnx.cursor()
-    nuid = int(nuid)
-    review_id = int(review_id)
+    courses = []
     try:
-        cur.callproc("insert_like", [nuid, review_id])
-        cnx.commit()
+        cur.callproc("get_student_courses", [nuid])
+        courses = cur.fetchall()
+
+        for course in courses:
+            course["semester"] = getSemester(course["sid"])
+            course["review_id"] = getStudentCourseReview(course["student_course_id"])
+            course["prof_name"] = getProfName(course["pid"])
+
     except pymysql.err.OperationalError as e:
         print(e)
     cur.close()
 
-
-def studentRemoveLikeReview(nuid, review_id):
-    cur = cnx.cursor()
-    nuid = int(nuid)
-    review_id = int(review_id)
-    try:
-        cur.callproc("delete_like", [nuid, review_id])
-        cnx.commit()
-    except pymysql.err.OperationalError as e:
-        print(e)
-    cur.close()
+    return courses
 
 
 def getSearch(search):
@@ -261,6 +222,34 @@ def getSearch(search):
 
 
 # ==============================================================
+# LIKES DATABASE FUNCTIONS
+
+
+def studentLikesReview(nuid, review_id):
+    cur = cnx.cursor()
+    nuid = int(nuid)
+    review_id = int(review_id)
+    try:
+        cur.callproc("insert_like", [nuid, review_id])
+        cnx.commit()
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+
+
+def studentRemoveLikeReview(nuid, review_id):
+    cur = cnx.cursor()
+    nuid = int(nuid)
+    review_id = int(review_id)
+    try:
+        cur.callproc("delete_like", [nuid, review_id])
+        cnx.commit()
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+
+
+# ==============================================================
 # REVIEW DATABASE FUNCTIONS
 
 
@@ -292,6 +281,21 @@ def get_review(review_id):
         print(e)
     cur.close()
     return review
+
+
+def getReviewsForCourse(nuid, cid, pid, sid):
+    cur = cnx.cursor()
+    reviews = []
+    try:
+        sid = None if sid == "-1" else int(sid)
+        cur.callproc("get_reviews_for_course", [nuid, cid, pid, sid])
+        reviews = cur.fetchall()
+        for review in reviews:
+            review["rating"] = str(review["rating"])
+    except pymysql.err.OperationalError as e:
+        print(e)
+    cur.close()
+    return reviews
 
 
 def edit_review(review_id, new_review):

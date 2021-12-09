@@ -87,14 +87,13 @@ DROP TABLE IF EXISTS review;
 CREATE TABLE review (
 	review_id  	INT		PRIMARY KEY		AUTO_INCREMENT,
     student_course_id INT UNIQUE NOT NULL,
-    rating DECIMAL(2 , 1 ) NOT NULL DEFAULT 5,
+    rating DECIMAL(3, 1 ) NOT NULL DEFAULT 5,
     review_comment VARCHAR(1000),
     likes INT NOT NULL DEFAULT 0,
     strength1 INT,
     strength2 INT,
     weakness1 INT,
     weakness2 INT,
-    CHECK (rating <= 10.0),
     CONSTRAINT review_student_course_id_fk 
 		FOREIGN KEY (student_course_id)
         REFERENCES student_course (student_course_id)
