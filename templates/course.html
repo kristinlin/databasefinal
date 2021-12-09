@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 
 {% block title %}
-Course Page
+{{ course }}
+{% endblock %}
+
+{% block link %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.2/dist/chart.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
 {% endblock %}
 
 {% block body %}
@@ -14,76 +20,225 @@ Course Page
         <div class="dropdown floatr">
             <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{ semester }}
+                {{ selectedSemesterName }}
             </a>
 
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="/course?courseId={{ courseId }}&semester=All Semesters">All Semesters</a>
-                <a class="dropdown-item" href="/course?courseId={{ courseId }}&semester=Fall2020">Fall2020</a>
+                <a class="dropdown-item"
+                    href="/course?cid={{ cid }}&pid={{ pid }}&prof={{ professor }}&course={{ course }}&semester=-1&semesterName=All Semesters">All
+                    Semesters</a>
+                {% for s in semesters %}
+                <a class="dropdown-item"
+                    href="/course?cid={{ cid }}&pid={{ pid }}&prof={{ professor }}&course={{ course }}&semester={{ s['sid'] }}&semesterName={{ s['sem_name'] }}">{{
+                    s['sem_name'] }}</a>
+                {% endfor %}
             </div>
         </div>
     </div>
 </div>
 
 <div class="row my-5">
-    <div class="col">
-        <h3>Rating Stats</h3>
-        <div class="d-inline-block stats">Participation Rate:</div>
-        <div class="d-inline-block stats">Median:</div>
-        <div class="d-inline-block stats">Mean:</div>
-        <h1>Graph</h1>
-    </div>
+    <h3>Rating Stats</h3>
+    <div class="d-inline-block stats">Average Rating: {{ avgRating }}</div>
+    <canvas id="ratingChart" height="300"></canvas>
+
+</div>
+
+<div class="row my-5 pb-5">
     <div class="col">
         <h3>Strengths</h3>
-        <h1>Graph</h1>
-
+        <div class="mt-4 px-5 mx-5">
+            <canvas id="strengthsChart" height="100"></canvas>
+        </div>
+    </div>
+    <div class="col">
         <h3>Weaknesses</h3>
-        <h1>Graph</h1>
+        <div class="mt-4 px-5 mx-5">
+            <canvas id="weaknessesChart" height="100"></canvas>
+        </div>
     </div>
 </div>
 
-<div class="row bg-dark text-white mt-5">
-    <div class="col-1">
-        Review#
+<div class="mb-5">
+    <div class="row bg-dark text-white mt-5">
+        <div class="col-1">
+            Review#
+        </div>
+        <div class="col-1">
+            Semester
+        </div>
+        <div class="col">
+            Comment
+        </div>
+        <div class="col-2">
+            Rating
+        </div>
+        <div class="col-2">
+            Helpful
+        </div>
     </div>
-    <div class="col-1">
-        Semester
-    </div>
-    <div class="col">
-        Comment
-    </div>
-    <div class="col-2">
-        Rating
-    </div>
-    <div class="col-2">
-        Helpful
-    </div>
-</div>
-{% for review in reviews %}
-<div class="row my-3">
-    <div class="col-1">
-        {{ review["id"] }}
-    </div>
-    <div class="col-1">
-        Fall2020
-    </div>
-    <div class="col">
-        {{ review["comment"] }}
-    </div>
-    <div class="col-2">
-        {{ review["rating"] }}
-    </div>
-    <div class="col-2">
-        {% if like %}
-        <a href="/course?courseId={{ courseId }}&semester={{ semester }}&like=False"> <i
-                class="fas fa-thumbs-up"></i></a>
-        {% else %}
-        <a href="/course?courseId={{ courseId }}&semester={{ semester }}&like=True"> <i class="far fa-thumbs-up"></i>
-        </a>
-        {% endif %}
+    {% for review in reviews %}
+    <div class="row my-3">
+        <div class="col-1">
+            {{ review["review_id"] }}
+        </div>
+        <div class="col-1">
+            {{ review["sem_name"] }}
+        </div>
+        <div class="col">
+            {{ review["review_comment"] }}
+        </div>
+        <div class="col-2">
+            {{ review["rating"] }}
+        </div>
+        <div class="col-2">
+            {% if review['student_liked_review'] == 1 %}
+            <a class="unlike"
+                href="/course?cid={{ cid }}&pid={{ pid }}&prof={{ professor }}&course={{ course }}&semester={{ selectedSemester }}&semesterName={{ selectedSemesterName }}&like=False&reviewId={{ review['review_id'] }}">
+                <i class="fas fa-thumbs-up"></i></a>
+            {% else %}
+            <a class="like"
+                href="/course?cid={{ cid }}&pid={{ pid }}&prof={{ professor }}&course={{ course }}&semester={{ selectedSemester }}&semesterName={{ selectedSemesterName }}&like=True&reviewId={{ review['review_id'] }}">
+                <i class="far fa-thumbs-up"></i>
+            </a>
+            {% endif %}
 
-        {{ review["helpful"] }}
+            {{ review["likes"] }}
+        </div>
     </div>
+    {% endfor %}
 </div>
-{% endfor %}
+{% endblock %}
+
+
+{% block script %}
+<script>
+
+    let reviewRatings = {{ reviewRatings | safe }};
+    let abilities = {{ abilityDescriptions | safe }};
+    let abilitiesId = {{ abilityIds | safe }};
+    let strengths = {{ reviewStrengths | safe }};
+    let weaknesses = {{ reviewWeaknesses | safe }};
+
+    const countRating = (reviewRatings, ratingLabel) => {
+        let count = 0;
+        for (let i = 0; i < reviewRatings.length; i++) {
+            if (reviewRatings[i] == ratingLabel.toString()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    const countAbilities = (listOfAbilites, ability) => {
+        let count = 0;
+        for (let i = 0; i < listOfAbilites.length; i++) {
+            if (listOfAbilites[i] == ability.toString()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    let listColors = [
+        '#fff100',
+        '#ff8c00',
+        '#e81123',
+        '#ec008c',
+        '#68217a',
+        '#00188f',
+        '#00bcf2',
+        '#00b294',
+        '#009e49',
+        '#bad80a',
+    ]
+
+    let ratingLabels = new Array(91).fill(null).map((val, index) => {
+        let num = index + 10; return Math.floor(num / 10).toString() + "." + num % 10
+    });
+    console.log(ratingLabels);
+    let reviewFrequency = ratingLabels.map(ratingLabel => countRating(reviewRatings, ratingLabel))
+    let strengthFrequency = abilitiesId.map(ability => countAbilities(strengths, ability));
+    let weaknessFrequency = abilitiesId.map(ability => countAbilities(weaknesses, ability));
+
+    const ratingChart = document.getElementById('ratingChart').getContext('2d');
+    var gradientStroke = ratingChart.createLinearGradient(1400, 0, 0, 0);
+    gradientStroke.addColorStop(0.5, "#80b6f4");
+    gradientStroke.addColorStop(1, "#f49080");
+    gradientStroke.addColorStop(0, "#00b300");
+
+    const myRatingChart = new Chart(ratingChart, {
+        type: 'line',
+        data: {
+            labels: ratingLabels,
+            datasets: [{
+                label: 'Rating Frequency',
+                data: reviewFrequency,
+                borderColor: gradientStroke,
+                pointBorderColor: gradientStroke,
+                pointBackgroundColor: gradientStroke,
+                pointHoverBackgroundColor: gradientStroke,
+                pointHoverBorderColor: gradientStroke
+            }],
+
+        },
+        options: {
+            scales: {
+                yAxes: {
+                    title: {
+                        display: true,
+                        text: 'Frequency'
+                    },
+                    ticks: {
+                        stepSize: 1
+                    }
+                },
+                xAxes: {
+                    title: {
+                        display: true,
+                        text: 'Rating'
+                    },
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+
+    const strengthsChart = document.getElementById('strengthsChart').getContext('2d');
+    const myStrengthsChart = new Chart(strengthsChart, {
+        type: 'doughnut',
+        data: {
+            labels: abilities,
+            datasets: [{
+                label: '# of Votes',
+                data: strengthFrequency,
+                backgroundColor: listColors,
+                borderColor: listColors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+        }
+    });
+
+    const weaknessesChart = document.getElementById('weaknessesChart').getContext('2d');
+    const myWeaknessesChart = new Chart(weaknessesChart, {
+        type: 'doughnut',
+        data: {
+            labels: abilities,
+            datasets: [{
+                label: '# of Votes',
+                data: weaknessFrequency,
+                backgroundColor: listColors,
+                borderColor: listColors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+        }
+    });
+
+</script>
 {% endblock %}

@@ -86,3 +86,11 @@ textarea {
     color: white;
     background-color: rgb(35, 131, 160);
 }
+
+.like {
+    color:  black
+}
+
+.unlike {
+    color:  rgb(35, 131, 160);
+}
