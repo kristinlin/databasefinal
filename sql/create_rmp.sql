@@ -114,6 +114,7 @@ CREATE TABLE review (
 		ON DELETE set NULL
 );
 
+
 DROP TABLE IF EXISTS student_likes_review;
 CREATE TABLE student_likes_review (
 student_like_review_id INT PRIMARY KEY AUTO_INCREMENT,

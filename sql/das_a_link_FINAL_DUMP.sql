@@ -1,15 +1,15 @@
-CREATE DATABASE  IF NOT EXISTS `das_a_link_dd` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE  IF NOT EXISTS `das_a_link_dd` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `das_a_link_dd`;
--- MySQL dump 10.13  Distrib 5.7.36, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.26, for macos11 (x86_64)
 --
 -- Host: 127.0.0.1    Database: das_a_link_dd
 -- ------------------------------------------------------
--- Server version	5.7.36-0ubuntu0.18.04.1
+-- Server version	8.0.26
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -23,13 +23,13 @@ USE `das_a_link_dd`;
 
 DROP TABLE IF EXISTS `abilities`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `abilities` (
-  `aid` int(11) NOT NULL AUTO_INCREMENT,
-  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `aid` int NOT NULL AUTO_INCREMENT,
+  `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`aid`),
   UNIQUE KEY `description` (`description`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -48,14 +48,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `course`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `course` (
-  `cid` int(11) NOT NULL AUTO_INCREMENT,
-  `course_subject` char(4) COLLATE utf8_unicode_ci NOT NULL,
-  `course_num` int(11) NOT NULL,
-  `title` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `cid` int NOT NULL AUTO_INCREMENT,
+  `course_subject` char(4) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `course_num` int NOT NULL,
+  `title` varchar(40) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`cid`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -74,12 +74,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `course_by_professor`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `course_by_professor` (
-  `cbp_id` int(11) NOT NULL AUTO_INCREMENT,
-  `cid` int(11) NOT NULL,
-  `pid` int(11) NOT NULL,
-  `sid` int(11) NOT NULL,
+  `cbp_id` int NOT NULL AUTO_INCREMENT,
+  `cid` int NOT NULL,
+  `pid` int NOT NULL,
+  `sid` int NOT NULL,
   PRIMARY KEY (`cbp_id`),
   UNIQUE KEY `cid_pid_sid` (`cid`,`pid`,`sid`),
   KEY `cbp_pid_fk` (`pid`),
@@ -87,7 +87,7 @@ CREATE TABLE `course_by_professor` (
   CONSTRAINT `cbp_cid_fk` FOREIGN KEY (`cid`) REFERENCES `course` (`cid`) ON UPDATE CASCADE,
   CONSTRAINT `cbp_pid_fk` FOREIGN KEY (`pid`) REFERENCES `professor` (`pid`) ON UPDATE CASCADE,
   CONSTRAINT `cbp_sid_fk` FOREIGN KEY (`sid`) REFERENCES `semester` (`sid`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -106,13 +106,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `professor`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `professor` (
-  `pid` int(11) NOT NULL AUTO_INCREMENT,
-  `fname` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
-  `lname` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+  `pid` int NOT NULL AUTO_INCREMENT,
+  `fname` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `lname` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`pid`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -131,17 +131,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `review`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `review` (
-  `review_id` int(11) NOT NULL AUTO_INCREMENT,
-  `student_course_id` int(11) NOT NULL,
-  `rating` decimal(3,1) NOT NULL DEFAULT '5.0',
+  `review_id` int NOT NULL AUTO_INCREMENT,
+  `student_course_id` int NOT NULL,
+  `rating` decimal(3,1) DEFAULT NULL,
   `review_comment` varchar(1000) DEFAULT NULL,
-  `likes` int(11) NOT NULL DEFAULT '0',
-  `strength1` int(11) DEFAULT NULL,
-  `strength2` int(11) DEFAULT NULL,
-  `weakness1` int(11) DEFAULT NULL,
-  `weakness2` int(11) DEFAULT NULL,
+  `likes` int NOT NULL DEFAULT '0',
+  `strength1` int DEFAULT NULL,
+  `strength2` int DEFAULT NULL,
+  `weakness1` int DEFAULT NULL,
+  `weakness2` int DEFAULT NULL,
   PRIMARY KEY (`review_id`),
   UNIQUE KEY `student_course_id` (`student_course_id`),
   KEY `strength1` (`strength1`),
@@ -153,7 +153,7 @@ CREATE TABLE `review` (
   CONSTRAINT `review_ibfk_3` FOREIGN KEY (`weakness1`) REFERENCES `abilities` (`aid`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `review_ibfk_4` FOREIGN KEY (`weakness2`) REFERENCES `abilities` (`aid`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `review_student_course_id_fk` FOREIGN KEY (`student_course_id`) REFERENCES `student_course` (`student_course_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -162,7 +162,7 @@ CREATE TABLE `review` (
 
 LOCK TABLES `review` WRITE;
 /*!40000 ALTER TABLE `review` DISABLE KEYS */;
-INSERT INTO `review` VALUES (1,3,8.0,'Professor Seo is a very dedicated and caring professor who conveys material very well and loves doing what she does. Great teacher and highly recommend her for any math courses she teaches\r\n',1,7,6,9,NULL),(2,2,8.5,'He is experienced and you can tell he knows what he is talking about. He also explained things in layperson\'s terms and often repeated things or waited for the topics to sink in. He didn\'t assume students knew what he was talking about and helped establish a strong base before diving into more complex topics. He was also very active on office hours and Piazza, sometimes even past midnight.',0,8,4,2,NULL),(3,1,9.1,'The professor provided a ton of material (slides, recorded videos, sample code) on Canvas to help students and it was organized very well, and lectures, even though rooted solidly in the slides, had a lot of additional information and explanation added in them to further explain topics; also answered questions when students were confused with material or for clarification\r\n',0,10,4,9,1),(4,6,10.0,'His enthusiasm and desire to teach are his greatest strengths and are effective in his teaching methods.\r\nProfessor usually went throught basic examples so that we would understand the concepts but the homework problems were more difficult and complex. I feel in the videos we should have done some more difficult problems as well as the basic ones.\r\n',0,1,7,10,2),(5,4,6.7,'The professor knew the material well but lacked explaining and delivering it well.\r\n',0,8,NULL,4,NULL),(6,5,9.0,'Love Sandrine best art professor I have had so far. Really knows how to make everyone fell special and express themselves.',0,7,6,NULL,NULL),(7,9,9.7,'The organization and presentation of the information made it really easy to learn all the information effectively. The professor set up everything to help the student succeed in receiving and understanding all the material.',0,10,2,9,NULL),(8,8,8.4,'The instructor is very kind, caring, and lenient in grading. He gave additional time to submit assignments and gave helpful hints. His piazza posts were very detailed and useful. His feedback and video lectures were great as well',0,7,6,2,NULL),(9,7,7.9,'More examples for each topic would be a great help. I frequently found that many homeworks i would look at a problem and not even be sure what topic it was reffering to as there were few to no examples similar to it covered',0,8,NULL,10,NULL),(10,11,7.8,'Professor Hescott seems to love the math behind computer science and as someone who also gets excited about math (not this course though) I thought it was very impressive. I only wish he had taught all the material rather than leaving a few of the more difficult modules for others to teach, as I learned much more from his lectures.',0,7,1,9,NULL),(11,10,9.3,'Somi is enthusiastic and knowledgable, and fun to lead the classroom.  But the questions in class should be more reflective on the test.\r\n',1,1,8,10,2),(12,12,7.0,'Course was well managed and time was well divided between topics, occasionally, the course did go very quickly and it seemed topics that would be covered in 5-10 minutes in class would be a bulk of the homework making those problems rather challenging',0,2,8,10,NULL),(13,14,4.4,'The teacher did not respond to some of the online students’ questions. The teacher did not explain why some homework and all quiz grades took months to grade. The teacher spent too much time talking about personal life stories instead of class material.',0,1,NULL,4,2),(15,13,5.0,'His enthusiasm and desire to teach are his greatest strengths and are effective in his teaching methods.\r\nI just wish there were more examples done in class.',0,1,7,2,10),(16,15,9.0,'patient and nice!\r\n',0,7,NULL,NULL,NULL),(17,16,8.0,'Prof. Hescott is a great teacher and explains material in a logical manner. I do believe that some additional explanations on topics could\'ve helped. For example, when we did proofs, it would\'ve been very helpful if we had a more general outline for the steps of the proof.',0,7,1,10,NULL),(18,18,8.0,'Thorough lectures that went over all the required material well, well structured chapters that were easy to keep track of.',0,10,NULL,NULL,NULL),(19,17,8.6,'Professor Durant went in depth with the material and provided many different options for learning the material (presentations, lectures, videos).',0,10,NULL,9,NULL),(21,21,5.0,'Nat did a great job displaying enthusiasm for the course material, and giving us lectures that were helpful. He clearly knew what he was talking about, and selected useful things for the curriculum.',0,10,8,2,NULL),(22,19,4.0,'Incredibly boring lectures. Lack of understanding of difficulty of having so much material in so little time. Homework assignents were so frequent and large it felt Herculean to get them all done',0,2,NULL,9,1),(23,24,5.0,'The posted lecture notes were way too long. It is impossible to expect students to read through 33 pages worth of lecture notes per week, especially written in such a poor format. Please condense this material for future students.',0,1,NULL,10,NULL),(24,22,9.2,'Course teaches a lot of useful content.',0,10,8,1,NULL);
+INSERT INTO `review` VALUES (1,3,8.0,'Professor Seo is a very dedicated and caring professor who conveys material very well and loves doing what she does. Great teacher and highly recommend her for any math courses she teaches\r\n',1,7,6,9,NULL),(2,2,8.5,'He is experienced and you can tell he knows what he is talking about. He also explained things in layperson\'s terms and often repeated things or waited for the topics to sink in. He didn\'t assume students knew what he was talking about and helped establish a strong base before diving into more complex topics. He was also very active on office hours and Piazza, sometimes even past midnight.',0,8,4,2,NULL),(3,1,9.1,'The professor provided a ton of material (slides, recorded videos, sample code) on Canvas to help students and it was organized very well, and lectures, even though rooted solidly in the slides, had a lot of additional information and explanation added in them to further explain topics; also answered questions when students were confused with material or for clarification\r\n',0,10,4,9,1),(4,6,10.0,'His enthusiasm and desire to teach are his greatest strengths and are effective in his teaching methods.\r\nProfessor usually went throught basic examples so that we would understand the concepts but the homework problems were more difficult and complex. I feel in the videos we should have done some more difficult problems as well as the basic ones.\r\n',0,1,7,10,2),(5,4,6.7,'The professor knew the material well but lacked explaining and delivering it well.\r\n',0,8,NULL,4,NULL),(6,5,9.0,'Love Sandrine best art professor I have had so far. Really knows how to make everyone fell special and express themselves.',0,7,6,NULL,NULL),(7,9,9.7,'The organization and presentation of the information made it really easy to learn all the information effectively. The professor set up everything to help the student succeed in receiving and understanding all the material.',0,10,2,9,NULL),(8,8,8.4,'The instructor is very kind, caring, and lenient in grading. He gave additional time to submit assignments and gave helpful hints. His piazza posts were very detailed and useful. His feedback and video lectures were great as well',0,7,6,2,NULL),(9,7,7.9,'More examples for each topic would be a great help. I frequently found that many homeworks i would look at a problem and not even be sure what topic it was reffering to as there were few to no examples similar to it covered',0,8,NULL,10,NULL),(10,11,7.8,'Professor Hescott seems to love the math behind computer science and as someone who also gets excited about math (not this course though) I thought it was very impressive. I only wish he had taught all the material rather than leaving a few of the more difficult modules for others to teach, as I learned much more from his lectures.',0,7,1,9,NULL),(11,10,9.3,'Somi is enthusiastic and knowledgable, and fun to lead the classroom.  But the questions in class should be more reflective on the test.\r\n',1,1,8,10,2),(12,12,7.0,'Course was well managed and time was well divided between topics, occasionally, the course did go very quickly and it seemed topics that would be covered in 5-10 minutes in class would be a bulk of the homework making those problems rather challenging',0,2,8,10,NULL),(13,14,4.4,'The teacher did not respond to some of the online students’ questions. The teacher did not explain why some homework and all quiz grades took months to grade. The teacher spent too much time talking about personal life stories instead of class material.',0,1,NULL,4,2),(15,13,5.0,'His enthusiasm and desire to teach are his greatest strengths and are effective in his teaching methods.\r\nI just wish there were more examples done in class.',0,1,7,2,10),(16,15,9.0,'patient and nice!\r\n',0,7,NULL,NULL,NULL),(17,16,8.0,'Prof. Hescott is a great teacher and explains material in a logical manner. I do believe that some additional explanations on topics could\'ve helped. For example, when we did proofs, it would\'ve been very helpful if we had a more general outline for the steps of the proof.',0,7,1,10,NULL),(18,18,8.0,'Thorough lectures that went over all the required material well, well structured chapters that were easy to keep track of.',0,10,NULL,NULL,NULL),(19,17,8.6,'Professor Durant went in depth with the material and provided many different options for learning the material (presentations, lectures, videos).',0,10,NULL,9,NULL),(21,21,5.0,'Nat did a great job displaying enthusiasm for the course material, and giving us lectures that were helpful. He clearly knew what he was talking about, and selected useful things for the curriculum.',0,10,8,2,NULL),(22,19,4.0,'Incredibly boring lectures. Lack of understanding of difficulty of having so much material in so little time. Homework assignents were so frequent and large it felt Herculean to get them all done',0,2,NULL,9,1),(23,24,5.0,'The posted lecture notes were way too long. It is impossible to expect students to read through 33 pages worth of lecture notes per week, especially written in such a poor format. Please condense this material for future students.',0,1,NULL,10,NULL),(24,22,9.2,'Course teaches a lot of useful content.',0,10,8,1,NULL),(30,23,9.6,'really great class! :)',0,4,NULL,9,NULL);
 /*!40000 ALTER TABLE `review` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -172,13 +172,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `semester`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `semester` (
-  `sid` int(11) NOT NULL AUTO_INCREMENT,
-  `sem_year` year(4) NOT NULL,
-  `sem_season` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `sid` int NOT NULL AUTO_INCREMENT,
+  `sem_year` year NOT NULL,
+  `sem_season` varchar(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`sid`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -197,14 +197,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `student`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `student` (
-  `nuid` int(11) NOT NULL AUTO_INCREMENT,
-  `fname` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
-  `lname` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
-  `pwd` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `nuid` int NOT NULL AUTO_INCREMENT,
+  `fname` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `lname` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `pwd` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`nuid`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -223,17 +223,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `student_course`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `student_course` (
-  `student_course_id` int(11) NOT NULL AUTO_INCREMENT,
-  `nuid` int(11) NOT NULL,
-  `cbp_id` int(11) NOT NULL,
+  `student_course_id` int NOT NULL AUTO_INCREMENT,
+  `nuid` int NOT NULL,
+  `cbp_id` int NOT NULL,
   PRIMARY KEY (`student_course_id`),
   UNIQUE KEY `nuid` (`nuid`,`cbp_id`),
   KEY `student_course_cbp_id_fk` (`cbp_id`),
   CONSTRAINT `student_course_cbp_id_fk` FOREIGN KEY (`cbp_id`) REFERENCES `course_by_professor` (`cbp_id`),
   CONSTRAINT `student_course_nuid_fk` FOREIGN KEY (`nuid`) REFERENCES `student` (`nuid`)
-) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -252,17 +252,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `student_likes_review`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `student_likes_review` (
-  `student_like_review_id` int(11) NOT NULL AUTO_INCREMENT,
-  `nuid` int(11) NOT NULL,
-  `review_id` int(11) NOT NULL,
+  `student_like_review_id` int NOT NULL AUTO_INCREMENT,
+  `nuid` int NOT NULL,
+  `review_id` int NOT NULL,
   PRIMARY KEY (`student_like_review_id`),
   UNIQUE KEY `nuid` (`nuid`,`review_id`),
   KEY `slr_review_id_fk` (`review_id`),
   CONSTRAINT `slr_nuid_fk` FOREIGN KEY (`nuid`) REFERENCES `student` (`nuid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `slr_review_id_fk` FOREIGN KEY (`review_id`) REFERENCES `review` (`review_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -277,16 +277,13 @@ UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER add_review_likes_insert	
-AFTER INSERT ON student_likes_review
-FOR EACH ROW
-BEGIN
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `add_review_likes_insert` AFTER INSERT ON `student_likes_review` FOR EACH ROW BEGIN
 
 update review set likes = likes + 1 where review_id=new.review_id;
 
@@ -299,16 +296,13 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER subtract_review_likes_delete	
-BEFORE DELETE ON student_likes_review
-FOR EACH ROW
-BEGIN
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `subtract_review_likes_delete` BEFORE DELETE ON `student_likes_review` FOR EACH ROW BEGIN
 
 update review set likes = likes - 1 where review_id = old.review_id;
 
@@ -330,15 +324,15 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` FUNCTION `pid_profname`(
 	in_pid int
-) RETURNS varchar(61) CHARSET utf8 COLLATE utf8_unicode_ci
+) RETURNS varchar(61) CHARSET utf8mb3 COLLATE utf8_unicode_ci
     READS SQL DATA
     DETERMINISTIC
 begin
@@ -357,15 +351,15 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` FUNCTION `sid_semester`(
 	in_sid int
-) RETURNS varchar(15) CHARSET utf8 COLLATE utf8_unicode_ci
+) RETURNS varchar(15) CHARSET utf8mb3 COLLATE utf8_unicode_ci
     READS SQL DATA
     DETERMINISTIC
 begin
@@ -384,15 +378,15 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` FUNCTION `student_course_review`(
 	in_student_course_id int
-) RETURNS int(11)
+) RETURNS int
     READS SQL DATA
     DETERMINISTIC
 begin
@@ -413,8 +407,8 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
@@ -440,8 +434,8 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
@@ -449,7 +443,7 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` FUNCTION `student_login`(
 	nuid int,
     pwd varchar(255)
-) RETURNS int(11)
+) RETURNS int
     READS SQL DATA
     DETERMINISTIC
 begin
@@ -466,8 +460,8 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
@@ -488,8 +482,8 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
@@ -512,13 +506,13 @@ DELIMITER ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8 */ ;
 /*!50003 SET character_set_results = utf8 */ ;
-/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET collation_connection  = utf8_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `edit_review`(
 	in in_review_id INT,
-    in in_rating DECIMAL(2, 1),
+    in in_rating DECIMAL(3, 1),
     in in_review_comment VARCHAR(1000),
     in in_strength1 INT,
     in in_strength2 INT,
@@ -539,8 +533,8 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
@@ -558,8 +552,8 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
@@ -577,8 +571,8 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
@@ -596,8 +590,8 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
@@ -617,8 +611,8 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
@@ -648,8 +642,8 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
@@ -713,8 +707,8 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
@@ -735,8 +729,8 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
@@ -759,8 +753,8 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
@@ -783,12 +777,12 @@ DELIMITER ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8 */ ;
 /*!50003 SET character_set_results = utf8 */ ;
-/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET collation_connection  = utf8_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_review`(
-	in in_rating DECIMAL(2, 1),
+	in in_rating DECIMAL(3, 1),
     in in_student_course_id INT,
     in in_review_comment VARCHAR(1000),
     in in_strength1 INT,
@@ -809,8 +803,8 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
@@ -838,4 +832,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-12-08 23:32:33
+-- Dump completed on 2021-12-09 21:37:31

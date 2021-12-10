@@ -1,5 +1,9 @@
 use das_a_link_dd;
 
+
+-- #####################################################################
+-- STUDENT TABLE
+
 drop function if exists student_login;
 delimiter $$
 create function student_login
@@ -15,7 +19,6 @@ begin
     return successful_login;
 end$$
 delimiter ;
-
 
 -- select student_login(1, "password1");
 -- select student_login(1, "password2");
@@ -37,6 +40,9 @@ delimiter ;
 -- select student_login(1, "newpwd1");
 
 
+-- #####################################################################
+-- STUDENT COURSES TABLE
+
 drop procedure if exists get_student_courses;
 delimiter $$
 create procedure get_student_courses
@@ -53,24 +59,6 @@ delimiter ;
 
 -- call get_student_courses(1);
 
-drop function if exists sid_semester;
-delimiter $$
-create function sid_semester
-(
-	in_sid int
-)
-returns varchar (15)
-deterministic reads sql data
-begin
-	declare sem_string varchar(15);
-    set sem_string = 
-    (select concat(sem_season, " ", sem_year) from semester s
-    where s.sid = in_sid );
-    return sem_string;
-end$$
-delimiter ;
-
--- select sid_semester(4); 
 
 drop function if exists student_course_review;
 delimiter $$
@@ -92,6 +80,46 @@ end$$
 delimiter ;
 
 
+-- #####################################################################
+-- SEMESTER TABLE
+
+drop function if exists sid_semester;
+delimiter $$
+create function sid_semester
+(
+	in_sid int
+)
+returns varchar (15)
+deterministic reads sql data
+begin
+	declare sem_string varchar(15);
+    set sem_string = 
+    (select concat(sem_season, " ", sem_year) from semester s
+    where s.sid = in_sid );
+    return sem_string;
+end$$
+delimiter ;
+
+-- select sid_semester(4); 
+
+
+drop procedure if exists get_semesters;
+delimiter $$
+create procedure get_semesters
+(
+	in in_cid INT,
+    in in_pid INT
+)
+begin
+	select sid, sid_semester(sid) as sem_name from course_by_professor where cid = in_cid and pid = in_pid;
+end$$
+delimiter ;
+
+-- call get_semesters(3, 3);
+
+-- #####################################################################
+-- PROFESSOR TABLE
+
 drop function if exists pid_profname;
 delimiter $$
 create function pid_profname
@@ -112,6 +140,9 @@ delimiter ;
 -- select pid_profname(5);
 
 
+-- #####################################################################
+-- ABILITIES TABLE
+
 drop procedure if exists get_abilities;
 delimiter $$
 create procedure get_abilities
@@ -130,6 +161,10 @@ begin
 end$$
 delimiter ;
 
+
+-- #####################################################################
+-- COURSE TABLE 
+
 drop procedure if exists get_course_nums;
 delimiter $$
 create procedure get_course_nums
@@ -139,6 +174,8 @@ begin
 end$$
 delimiter ;
 
+-- #####################################################################
+-- REVIEW TABLE
 
 drop procedure if exists get_search;
 delimiter $$
@@ -195,23 +232,48 @@ begin
 end$$
 delimiter ;
 
-call get_search("CS", 1800, "Hescat"); 
+-- call get_search("CS", 1800, "Hescat"); 
+-- call get_search("CS", 1800, NULL);
+-- call get_search("CS", NULL, "Hescat");
+-- call get_search(NULL, 1800, "Hescat");
+-- call get_search(NULL, NULL, "Hescat");
+-- call get_search(NULL, 1800, NULL);
+-- call get_search("CS", NULL, NULL);
+-- call get_search(NULL, NULL, NULL);
 
-call get_search("CS", 1800, NULL);
-call get_search("CS", NULL, "Hescat");
-call get_search(NULL, 1800, "Hescat");
 
-call get_search(NULL, NULL, "Hescat");
-call get_search(NULL, 1800, NULL);
-call get_search("CS", NULL, NULL);
 
-call get_search(NULL, NULL, NULL);
+drop procedure if exists get_reviews_for_course;
+delimiter $$
+create procedure get_reviews_for_course
+(
+	in in_nuid INT,
+    in in_cid INT,
+    in in_pid INT,
+    in in_sid INT
+)
+begin
+	if in_sid is NULL then
+		select r.*, sid_semester(c.sid) sem_name, student_liked_review(in_nuid, r.review_id) student_liked_review from review r, student_course s, course_by_professor c
+        where c.cid = in_cid and c.pid = in_pid and r.student_course_id =  s.student_course_id and s.cbp_id = c.cbp_id;
+	else
+		select r.*, sid_semester(in_sid) sem_name, student_liked_review(in_nuid, r.review_id) student_liked_review from review r where student_course_id in
+		(select student_course_id from student_course where cbp_id in
+		(select cbp_id from course_by_professor where cid = in_cid and pid = in_pid and sid = in_sid)); 
+	end if;
+end$$
+delimiter ;
+
+-- call get_reviews_for_course(2, 3, 3, NULL);
+-- call get_reviews_for_course(2, 3, 3, 4);
+
+
 
 drop procedure if exists insert_review;
 delimiter $$
 create procedure insert_review
 (
-	in in_rating DECIMAL(2, 1),
+	in in_rating DECIMAL(3, 1),
     in in_student_course_id INT,
     in in_review_comment VARCHAR(1000),
     in in_strength1 INT,
@@ -239,7 +301,7 @@ begin
 end$$
 delimiter ;
 
-call get_review(5);
+-- call get_review(5);
 
 
 drop procedure if exists edit_review;
@@ -247,7 +309,7 @@ delimiter $$
 create procedure edit_review
 (
 	in in_review_id INT,
-    in in_rating DECIMAL(2, 1),
+    in in_rating DECIMAL(3, 1),
     in in_review_comment VARCHAR(1000),
     in in_strength1 INT,
     in in_strength2 INT,
@@ -276,82 +338,10 @@ begin
 end$$
 delimiter ;
 
-select * from review;
 
+-- #####################################################################
+-- LIKES TABLE
 
-drop procedure if exists get_semesters;
-delimiter $$
-create procedure get_semesters
-(
-	in in_cid INT,
-    in in_pid INT
-)
-begin
-	select sid, sid_semester(sid) as sem_name from course_by_professor where cid = in_cid and pid = in_pid;
-end$$
-delimiter ;
-
-call get_semesters(3, 3);
-
-
-
--- drop procedure if exists get_reviews_for_course;
--- delimiter $$
--- create procedure get_reviews_for_course
--- (
--- 	in in_cid INT,
---     in in_pid INT,
---     in in_sid INT
--- )
--- begin
--- 	if in_sid is NULL then
--- 		select * from review where student_course_id in
--- 		(select student_course_id from student_course where cbp_id in
--- 		(select cbp_id from course_by_professor where cid = in_cid and pid = in_pid)); 
--- 	else
--- 		select *, in_sid from review where student_course_id in
--- 		(select student_course_id from student_course where cbp_id in
--- 		(select cbp_id from course_by_professor where cid = in_cid and pid = in_pid and sid = in_sid)); 
--- 	end if;
--- end$$
--- delimiter ;
-
-drop procedure if exists get_reviews_for_course;
-delimiter $$
-create procedure get_reviews_for_course
-(
-	in in_nuid INT,
-    in in_cid INT,
-    in in_pid INT,
-    in in_sid INT
-)
-begin
-	if in_sid is NULL then
-		select r.*, sid_semester(c.sid) sem_name, student_liked_review(in_nuid, r.review_id) student_liked_review from review r, student_course s, course_by_professor c
-        where c.cid = in_cid and c.pid = in_pid and r.student_course_id =  s.student_course_id and s.cbp_id = c.cbp_id;
-	else
-		select r.*, sid_semester(in_sid) sem_name, student_liked_review(in_nuid, r.review_id) student_liked_review from review r where student_course_id in
-		(select student_course_id from student_course where cbp_id in
-		(select cbp_id from course_by_professor where cid = in_cid and pid = in_pid and sid = in_sid)); 
-	end if;
-end$$
-delimiter ;
-
-call get_reviews_for_course(2, 3, 3, NULL);
-call get_reviews_for_course(2, 3, 3, 4);
--- 
--- select * from student_course;
-drop procedure if exists insert_like;
-delimiter $$
-create procedure insert_like
-(
-	in in_nuid INT,
-    in in_review_id INT
-)
-begin
-	insert into student_likes_review (nuid, review_id) values (in_nuid, in_review_id);
-end$$
-delimiter ;
 
 drop procedure if exists delete_like;
 delimiter $$
@@ -362,6 +352,18 @@ create procedure delete_like
 )
 begin
 	delete from student_likes_review where in_nuid=nuid and in_review_id=review_id;
+end$$
+delimiter ;
+
+drop procedure if exists insert_like;
+delimiter $$
+create procedure insert_like
+(
+	in in_nuid INT,
+    in in_review_id INT
+)
+begin
+	insert into student_likes_review (nuid, review_id) values (in_nuid, in_review_id);
 end$$
 delimiter ;
 
